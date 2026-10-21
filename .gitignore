@@ -1,15 +1,31 @@
+# =========================================================================
+# MAVEN / JAVA BUILD
+# =========================================================================
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
 
-### IntelliJ IDEA ###
-.idea
+# =========================================================================
+# IDEs (IntelliJ IDEA, Eclipse, NetBeans, VS Code)
+# =========================================================================
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
-### Eclipse / VS Code ###
 .apt_generated
 .classpath
 .factorypath
@@ -17,8 +33,29 @@ target/
 .settings
 .springBeans
 .sts4-cache
+bin/
+
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
 .vscode/
 
-### Banco Local H2 ###
+# =========================================================================
+# BANCO DE DADOS LOCAL & VARIAVEIS DE AMBIENTE
+# =========================================================================
 data/
 *.db
+*.mv.db
+*.trace.db
+.env
+.env.*
+
+# =========================================================================
+# SISTEMA OPERACIONAL (Windows / macOS / Linux)
+# =========================================================================
+.DS_Store
+Thumbs.db
+Desktop.ini
