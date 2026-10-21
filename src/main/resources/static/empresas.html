@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Empresas Parceiras - Sistema de Moeda Estudantil</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <a href="/index.html" class="brand">
+            <span class="coin">M$</span> Sistema de Moeda Estudantil
+        </a>
+        <nav>
+            <a href="/index.html">Início / Login</a>
+            <a href="/alunos.html">CRUD Alunos</a>
+            <a href="/empresas.html" class="active">CRUD Empresas Parceiras</a>
+            <span id="userStatus" class="user-status"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-title">
+            <h1>Gerenciamento de Empresas Parceiras (US12 e US14)</h1>
+            <p>Cadastre, consulte, altere e exclua empresas parceiras no sistema de mérito estudantil.</p>
+        </div>
+
+        <div id="empresaAlert" class="alert"></div>
+
+        <div class="grid-2">
+            <!-- Formulario de Cadastro / Edicao -->
+            <section class="card">
+                <h2 id="formTitle">Cadastrar Empresa Parceira</h2>
+                <form id="empresaForm">
+                    <input type="hidden" id="empresaId">
+
+                    <div class="section-subtitle">Dados da Empresa</div>
+                    <div class="form-group">
+                        <label for="nome">Razão Social / Nome Fantasia *</label>
+                        <input type="text" id="nome" required placeholder="Ex: Livraria e Papelaria Universitária">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cnpj">CNPJ *</label>
+                        <input type="text" id="cnpj" required placeholder="00.000.000/0001-00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail Corporativo (para conferência de resgates) *</label>
+                        <input type="email" id="email" required placeholder="parceria@empresa.com.br">
+                    </div>
+
+                    <div class="section-subtitle">Credenciais de Acesso (RN01)</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="login">Login *</label>
+                            <input type="text" id="login" required placeholder="login.empresa">
+                        </div>
+                        <div class="form-group">
+                            <label for="senha" id="senhaLabel">Senha *</label>
+                            <input type="password" id="senha" required placeholder="Senha de acesso">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary" id="btnSalvar">Cadastrar Empresa</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelar" style="display:none;">Cancelar Edição</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Tabela de Listagem -->
+            <section class="card">
+                <h2>Empresas Parceiras Cadastradas</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome da Empresa</th>
+                                <th>CNPJ</th>
+                                <th>E-mail / Login</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaEmpresas">
+                            <tr>
+                                <td colspan="5" style="text-align:center;">Carregando empresas...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/empresas.js"></script>
+</body>
+</html>

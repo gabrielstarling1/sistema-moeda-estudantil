@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Moeda Estudantil - PUC Minas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <a href="/index.html" class="brand">
+            <span class="coin">M$</span> Sistema de Moeda Estudantil
+        </a>
+        <nav>
+            <a href="/index.html" class="active">Início / Login</a>
+            <a href="/alunos.html">CRUD Alunos</a>
+            <a href="/empresas.html">CRUD Empresas Parceiras</a>
+            <span id="userStatus" class="user-status"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-title">
+            <h1>Portal de Mérito Estudantil (Sprint 2 - MVC)</h1>
+            <p>Autenticação unificada (RN01) e gerenciamento de Alunos e Empresas Parceiras.</p>
+        </div>
+
+        <div class="grid-2">
+            <!-- Card de Autenticacao (US02, US08, US13) -->
+            <section class="card">
+                <h2>Autenticar-se no Sistema (US02 / US08 / US13)</h2>
+                <div id="loginAlert" class="alert"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="login">Login de Acesso</label>
+                        <input type="text" id="login" required placeholder="Ex: milena.adao ou seu login cadastrado">
+                    </div>
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" required placeholder="Digite sua senha">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Entrar no Sistema</button>
+                    </div>
+                </form>
+
+                <div style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 0.85rem;">
+                    <strong>Professores Pré-cadastrados (RN03):</strong><br>
+                    • Login: <code>milena.adao</code> | Senha: <code>123456</code> (PUC Minas - 1.000 moedas)<br>
+                    • Login: <code>carlos.silva</code> | Senha: <code>123456</code> (UFMG - 1.000 moedas)
+                </div>
+            </section>
+
+            <!-- Acesso Rapido aos Modulos da Sprint 2 -->
+            <section class="card">
+                <h2>Módulos da Sprint 2 (Lab03S02)</h2>
+                <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1rem;">
+                    Selecione um dos módulos abaixo para testar os CRUDs completos integrados ao banco de dados via JPA/Hibernate (Padrão Repository/DAO):
+                </p>
+
+                <div class="hero-cards" style="grid-template-columns: 1fr;">
+                    <div class="card" style="background: #f8fafc;">
+                        <h3 style="color: var(--primary); margin-bottom: 0.35rem;">1. Gerenciamento de Alunos (US01 e US03)</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+                            Cadastro com seleção de Instituição de Ensino pré-cadastrada (RN02), endereço completo (Composição 1:1), consulta, atualização e exclusão com confirmação.
+                        </p>
+                        <a href="/alunos.html" class="btn btn-primary btn-sm">Acessar CRUD de Alunos →</a>
+                    </div>
+
+                    <div class="card" style="background: #f8fafc;">
+                        <h3 style="color: var(--secondary); margin-bottom: 0.35rem;">2. Gerenciamento de Empresas Parceiras (US12 e US14)</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+                            Cadastro de empresas parceiras com validação de CNPJ e login únicos, consulta, alteração de dados cadastrais e exclusão com confirmação.
+                        </p>
+                        <a href="/empresas.html" class="btn btn-primary btn-sm">Acessar CRUD de Empresas →</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                login: document.getElementById('login').value.trim(),
+                senha: document.getElementById('senha').value
+            };
+            try {
+                const res = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                localStorage.setItem('usuarioLogado', JSON.stringify(res));
+                atualizarStatusUsuario();
+                mostrarAlerta('loginAlert', `${res.mensagem} Bem-vindo(a), ${res.nome} (${res.tipoUsuario}).`, 'success');
+            } catch (err) {
+                mostrarAlerta('loginAlert', err.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
