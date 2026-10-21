@@ -3,102 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Moeda Estudantil - PUC Minas</title>
+    <title>Painel Geral | Sistema de Moeda Estudantil PUC Minas</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <header class="navbar">
-        <a href="/index.html" class="brand">
-            <span class="coin">M$</span> Sistema de Moeda Estudantil
-        </a>
-        <nav>
-            <a href="/index.html" class="active">Início / Login</a>
-            <a href="/alunos.html">CRUD Alunos</a>
-            <a href="/empresas.html">CRUD Empresas Parceiras</a>
-            <span id="userStatus" class="user-status"></span>
-        </nav>
-    </header>
-
-    <main class="container">
-        <div class="page-title">
-            <h1>Portal de Mérito Estudantil (Sprint 2 - MVC)</h1>
-            <p>Autenticação unificada (RN01) e gerenciamento de Alunos e Empresas Parceiras.</p>
-        </div>
-
-        <div class="grid-2">
-            <!-- Card de Autenticacao (US02, US08, US13) -->
-            <section class="card">
-                <h2>Autenticar-se no Sistema (US02 / US08 / US13)</h2>
-                <div id="loginAlert" class="alert"></div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="login">Login de Acesso</label>
-                        <input type="text" id="login" required placeholder="Ex: milena.adao ou seu login cadastrado">
+    <div class="app-shell">
+        <!-- SIDEBAR DINAMICA POR PERFIL -->
+        <aside class="sidebar">
+            <div>
+                <a href="/index.html" class="brand-box">
+                    <div class="brand-coin">M$</div>
+                    <div class="brand-text">
+                        <h2>Moeda Estudantil</h2>
+                        <span>PUC Minas • Engenharia de Software</span>
                     </div>
-                    <div class="form-group">
-                        <label for="senha">Senha</label>
-                        <input type="password" id="senha" required placeholder="Digite sua senha">
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">Entrar no Sistema</button>
-                    </div>
-                </form>
+                </a>
 
-                <div style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 0.85rem;">
-                    <strong>Professores Pré-cadastrados (RN03):</strong><br>
-                    • Login: <code>milena.adao</code> | Senha: <code>123456</code> (PUC Minas - 1.000 moedas)<br>
-                    • Login: <code>carlos.silva</code> | Senha: <code>123456</code> (UFMG - 1.000 moedas)
+                <div class="nav-section-label">Meu Espaço</div>
+                <nav class="sidebar-nav" id="sidebarNavPrincipal"></nav>
+
+                <div class="nav-section-label">Operações de Mérito</div>
+                <nav class="sidebar-nav" id="sidebarNavOperacoes"></nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <strong>Laboratório 3 — Profa. Milena Adão</strong>
+                Arquitetura MVC • JPA/Hibernate • PostgreSQL<br>
+                <span style="font-size:0.7rem;color:#64748b;">Bernardo • Gabriel • João Paulo • Rafael</span>
+            </div>
+        </aside>
+
+        <!-- AREA PRINCIPAL -->
+        <div class="main-area">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <span class="puc-badge" id="topbarRoleBadge">🏛️ PUC Minas • 2º Semestre/2026</span>
+                    <span style="font-size:0.82rem;color:#64748b;" id="topbarSubtitle">Sistema de Reconhecimento do Mérito Estudantil</span>
                 </div>
-            </section>
-
-            <!-- Acesso Rapido aos Modulos da Sprint 2 -->
-            <section class="card">
-                <h2>Módulos da Sprint 2 (Lab03S02)</h2>
-                <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1rem;">
-                    Selecione um dos módulos abaixo para testar os CRUDs completos integrados ao banco de dados via JPA/Hibernate (Padrão Repository/DAO):
-                </p>
-
-                <div class="hero-cards" style="grid-template-columns: 1fr;">
-                    <div class="card" style="background: #f8fafc;">
-                        <h3 style="color: var(--primary); margin-bottom: 0.35rem;">1. Gerenciamento de Alunos (US01 e US03)</h3>
-                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;">
-                            Cadastro com seleção de Instituição de Ensino pré-cadastrada (RN02), endereço completo (Composição 1:1), consulta, atualização e exclusão com confirmação.
-                        </p>
-                        <a href="/alunos.html" class="btn btn-primary btn-sm">Acessar CRUD de Alunos →</a>
-                    </div>
-
-                    <div class="card" style="background: #f8fafc;">
-                        <h3 style="color: var(--secondary); margin-bottom: 0.35rem;">2. Gerenciamento de Empresas Parceiras (US12 e US14)</h3>
-                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;">
-                            Cadastro de empresas parceiras com validação de CNPJ e login únicos, consulta, alteração de dados cadastrais e exclusão com confirmação.
-                        </p>
-                        <a href="/empresas.html" class="btn btn-primary btn-sm">Acessar CRUD de Empresas →</a>
-                    </div>
+                <div class="topbar-right">
+                    <div id="userStatus" class="user-pill"></div>
                 </div>
-            </section>
-        </div>
-    </main>
+            </header>
 
-    <script src="/js/api.js"></script>
+            <main class="content-wrapper">
+                <!-- HERO BANNER -->
+                <section class="hero-banner">
+                    <div>
+                        <h1 id="welcomeUserTitle">Plataforma de Reconhecimento & Mérito Estudantil</h1>
+                        <p id="welcomeUserDesc">
+                            Bem-vindo ao portal do Sistema de Moeda Estudantil.
+                        </p>
+                    </div>
+                    <div class="hero-wallet">
+                        <div class="wallet-label" id="heroWalletLabel">Carteira</div>
+                        <div class="wallet-value" id="heroWalletValue">0 M$</div>
+                        <div class="wallet-sub" id="heroWalletSub">Saldo disponível</div>
+                    </div>
+                </section>
+
+                <!-- KPIs EM TEMPO REAL DO BANCO DE DADOS -->
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon blue">🏛️</div>
+                        <div class="kpi-info">
+                            <span>Instituições Participantes</span>
+                            <h3 id="kpiInstituicoes">3</h3>
+                            <small>Instituições conveniadas</small>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon gold">👨‍🏫</div>
+                        <div class="kpi-info">
+                            <span>Professores Vinculados</span>
+                            <h3 id="kpiProfessores">2</h3>
+                            <small>1.000 moedas/semestre</small>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon purple">🎓</div>
+                        <div class="kpi-info">
+                            <span>Alunos Cadastrados</span>
+                            <h3 id="kpiAlunos">0</h3>
+                            <small>Ativos no sistema</small>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon teal">🏢</div>
+                        <div class="kpi-info">
+                            <span>Empresas Parceiras</span>
+                            <h3 id="kpiEmpresas">0</h3>
+                            <small>Parceiros credenciados</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AÇÕES EXCLUSIVAS DO PERFIL LOGADO -->
+                <section class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h2 id="tituloModulosPerfil">🧭 Minhas Funcionalidades</h2>
+                        <span style="font-size:0.78rem;color:#64748b;" id="subtituloModulosPerfil">Acesso exclusivo do perfil</span>
+                    </div>
+
+                    <div class="ecosystem-grid" id="gridModulosPerfil"></div>
+                </section>
+
+                <!-- TABELA CONTEXTUAL DO PAINEL -->
+                <section class="card" id="secaoTabelaPainel">
+                    <div class="card-header">
+                        <h2 id="tituloTabelaPainel">👨‍🏫 Corpo Docente & Instituições Conveniadas</h2>
+                        <span class="badge-role professor">Parceria Institucional</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Professor</th>
+                                    <th>CPF</th>
+                                    <th>Departamento</th>
+                                    <th>Instituição de Vínculo</th>
+                                    <th>Saldo Semestral</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaProfessores">
+                                <tr>
+                                    <td colspan="5" style="text-align:center;color:#64748b;">Carregando docentes...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL DE PREVIEW DOS MODULOS -->
+    <div id="modalSprint3" class="modal-backdrop" onclick="if(event.target===this) fecharModalPreview()">
+        <div class="modal-card">
+            <h3 id="modalTitulo">Módulo do Sistema</h3>
+            <p id="modalDescricao"></p>
+            <div id="modalPreviewBox" class="preview-box"></div>
+            <div style="display:flex;justify-content:flex-end;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="fecharModalPreview()">Entendi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js?v=3"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                login: document.getElementById('login').value.trim(),
-                senha: document.getElementById('senha').value
-            };
-            try {
-                const res = await apiRequest('/api/auth/login', {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-                localStorage.setItem('usuarioLogado', JSON.stringify(res));
-                atualizarStatusUsuario();
-                mostrarAlerta('loginAlert', `${res.mensagem} Bem-vindo(a), ${res.nome} (${res.tipoUsuario}).`, 'success');
-            } catch (err) {
-                mostrarAlerta('loginAlert', err.message, 'error');
+        function montarCardsDoPerfil() {
+            const user = obterUsuarioLogado();
+            if (!user) return;
+
+            const grid = document.getElementById('gridModulosPerfil');
+            const desc = document.getElementById('welcomeUserDesc');
+            const roleBadge = document.getElementById('topbarRoleBadge');
+
+            if (user.tipoUsuario === 'ALUNO') {
+                roleBadge.textContent = '🎓 Área Exclusiva do Aluno';
+                desc.textContent = 'Acompanhe seu saldo de moedas estudantis, gerencie seus dados cadastrais e confira as vantagens oferecidas pelas empresas parceiras.';
+                grid.innerHTML = `
+                    <div class="feature-card">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-role aluno">Dados Cadastrais</span>
+                                <span class="pill-active">Disponível</span>
+                            </div>
+                            <h3>Gerenciar Meu Cadastro</h3>
+                            <p>Consulte, atualize ou exclua seus dados pessoais, curso, instituição de ensino e endereço residencial.</p>
+                        </div>
+                        <a href="/alunos.html" class="btn btn-primary btn-sm">Acessar Meu Cadastro →</a>
+                    </div>
+                    <div class="feature-card sprint3">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-coin">🎁 Catálogo de Vantagens</span>
+                                <span class="pill-soon">Em breve</span>
+                            </div>
+                            <h3>Trocar Moedas por Vantagens</h3>
+                            <p>Escolha descontos e produtos cadastrados por empresas parceiras e receba seu cupom por e-mail.</p>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="abrirModalPreview('vantagens')">Ver Funcionamento</button>
+                    </div>
+                `;
+            } else if (user.tipoUsuario === 'EMPRESA') {
+                roleBadge.textContent = '🏢 Área Exclusiva da Empresa Parceira';
+                desc.textContent = 'Gerencie os dados cadastrais da sua empresa parceira e ofereça produtos e descontos exclusivos para os estudantes.';
+                grid.innerHTML = `
+                    <div class="feature-card">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-role empresa">Dados Corporativos</span>
+                                <span class="pill-active">Disponível</span>
+                            </div>
+                            <h3>Gerenciar Cadastro da Minha Empresa</h3>
+                            <p>Consulte, altere ou exclua os dados da sua empresa parceira (Razão Social, CNPJ, e-mail de conferência e senha).</p>
+                        </div>
+                        <a href="/empresas.html" class="btn btn-primary btn-sm">Acessar Dados da Empresa →</a>
+                    </div>
+                    <div class="feature-card sprint3">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-coin">🎁 Minhas Vantagens</span>
+                                <span class="pill-soon">Em breve</span>
+                            </div>
+                            <h3>Cadastrar Vantagens & Conferir Cupons</h3>
+                            <p>Adicione produtos e descontos com descrição, foto e custo em moedas para resgate pelos alunos.</p>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="abrirModalPreview('vantagens')">Ver Funcionamento</button>
+                    </div>
+                `;
+            } else {
+                roleBadge.textContent = '👨‍🏫 Área Exclusiva do Professor';
+                desc.textContent = 'Distribua suas 1.000 moedas semestrais para reconhecer o mérito dos seus alunos e acompanhe as instituições e parceiros.';
+                grid.innerHTML = `
+                    <div class="feature-card">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-role aluno">Diretório Acadêmico</span>
+                                <span class="pill-active">Disponível</span>
+                            </div>
+                            <h3>Alunos Cadastrados</h3>
+                            <p>Consulte a lista de estudantes ingressantes no sistema de mérito, seus cursos, instituições e saldos.</p>
+                        </div>
+                        <a href="/alunos.html" class="btn btn-primary btn-sm">Ver Alunos →</a>
+                    </div>
+                    <div class="feature-card">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-role empresa">Rede Conveniada</span>
+                                <span class="pill-active">Disponível</span>
+                            </div>
+                            <h3>Empresas Parceiras</h3>
+                            <p>Consulte as empresas parceiras credenciadas no sistema que oferecem benefícios aos alunos.</p>
+                        </div>
+                        <a href="/empresas.html" class="btn btn-primary btn-sm">Ver Empresas →</a>
+                    </div>
+                    <div class="feature-card sprint3">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-role professor">Reconhecimento</span>
+                                <span class="pill-soon">Em breve</span>
+                            </div>
+                            <h3>Enviar Moedas a um Aluno</h3>
+                            <p>Selecione um aluno, informe a quantidade de moedas e o motivo do reconhecimento com envio de e-mail.</p>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="abrirModalPreview('transferencia')">Ver Funcionamento</button>
+                    </div>
+                    <div class="feature-card sprint3">
+                        <div>
+                            <div class="feature-top">
+                                <span class="badge-coin">📄 Extrato Docente</span>
+                                <span class="pill-soon">Em breve</span>
+                            </div>
+                            <h3>Consultar Extrato de Envios</h3>
+                            <p>Visualize seu saldo de moedas acumuladas no semestre e o histórico de todas as transferências realizadas.</p>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="abrirModalPreview('extrato')">Ver Funcionamento</button>
+                    </div>
+                `;
             }
-        });
+        }
+
+        async function carregarDashboard() {
+            montarCardsDoPerfil();
+            try {
+                const [instituicoes, professores, alunos, empresas] = await Promise.all([
+                    apiRequest('/api/instituicoes'),
+                    apiRequest('/api/professores'),
+                    apiRequest('/api/alunos'),
+                    apiRequest('/api/empresas')
+                ]);
+
+                document.getElementById('kpiInstituicoes').textContent = instituicoes.length;
+                document.getElementById('kpiProfessores').textContent = professores.length;
+                document.getElementById('kpiAlunos').textContent = alunos.length;
+                document.getElementById('kpiEmpresas').textContent = empresas.length;
+
+                const tbody = document.getElementById('tabelaProfessores');
+                tbody.innerHTML = '';
+                professores.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${p.nome}</strong><br>
+                            <small style="color:#64748b;">Login: @${p.login}</small>
+                        </td>
+                        <td>${p.cpf}</td>
+                        <td>${p.departamento}</td>
+                        <td>${p.instituicaoEnsino ? p.instituicaoEnsino.nome : '-'}</td>
+                        <td><span class="badge-coin">🪙 ${p.saldoMoedas} M$</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarDashboard);
     </script>
 </body>
 </html>

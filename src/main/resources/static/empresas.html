@@ -3,98 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Empresas Parceiras - Sistema de Moeda Estudantil</title>
+    <title>Área da Empresa Parceira | Sistema de Moeda Estudantil</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <header class="navbar">
-        <a href="/index.html" class="brand">
-            <span class="coin">M$</span> Sistema de Moeda Estudantil
-        </a>
-        <nav>
-            <a href="/index.html">Início / Login</a>
-            <a href="/alunos.html">CRUD Alunos</a>
-            <a href="/empresas.html" class="active">CRUD Empresas Parceiras</a>
-            <span id="userStatus" class="user-status"></span>
-        </nav>
-    </header>
-
-    <main class="container">
-        <div class="page-title">
-            <h1>Gerenciamento de Empresas Parceiras (US12 e US14)</h1>
-            <p>Cadastre, consulte, altere e exclua empresas parceiras no sistema de mérito estudantil.</p>
-        </div>
-
-        <div id="empresaAlert" class="alert"></div>
-
-        <div class="grid-2">
-            <!-- Formulario de Cadastro / Edicao -->
-            <section class="card">
-                <h2 id="formTitle">Cadastrar Empresa Parceira</h2>
-                <form id="empresaForm">
-                    <input type="hidden" id="empresaId">
-
-                    <div class="section-subtitle">Dados da Empresa</div>
-                    <div class="form-group">
-                        <label for="nome">Razão Social / Nome Fantasia *</label>
-                        <input type="text" id="nome" required placeholder="Ex: Livraria e Papelaria Universitária">
+    <div class="app-shell">
+        <!-- SIDEBAR DINAMICA -->
+        <aside class="sidebar">
+            <div>
+                <a href="/index.html" class="brand-box">
+                    <div class="brand-coin">M$</div>
+                    <div class="brand-text">
+                        <h2>Moeda Estudantil</h2>
+                        <span>PUC Minas • Engenharia de Software</span>
                     </div>
+                </a>
 
-                    <div class="form-group">
-                        <label for="cnpj">CNPJ *</label>
-                        <input type="text" id="cnpj" required placeholder="00.000.000/0001-00">
-                    </div>
+                <div class="nav-section-label">Meu Espaço</div>
+                <nav class="sidebar-nav" id="sidebarNavPrincipal"></nav>
 
-                    <div class="form-group">
-                        <label for="email">E-mail Corporativo (para conferência de resgates) *</label>
-                        <input type="email" id="email" required placeholder="parceria@empresa.com.br">
-                    </div>
+                <div class="nav-section-label">Operações de Mérito</div>
+                <nav class="sidebar-nav" id="sidebarNavOperacoes"></nav>
+            </div>
 
-                    <div class="section-subtitle">Credenciais de Acesso (RN01)</div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="login">Login *</label>
-                            <input type="text" id="login" required placeholder="login.empresa">
-                        </div>
-                        <div class="form-group">
-                            <label for="senha" id="senhaLabel">Senha *</label>
-                            <input type="password" id="senha" required placeholder="Senha de acesso">
-                        </div>
-                    </div>
+            <div class="sidebar-footer">
+                <strong>Laboratório 3 — Profa. Milena Adão</strong>
+                Arquitetura MVC • JPA/Hibernate • PostgreSQL<br>
+                <span style="font-size:0.7rem;color:#64748b;">Bernardo • Gabriel • João Paulo • Rafael</span>
+            </div>
+        </aside>
 
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary" id="btnSalvar">Cadastrar Empresa</button>
-                        <button type="button" class="btn btn-secondary" id="btnCancelar" style="display:none;">Cancelar Edição</button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- Tabela de Listagem -->
-            <section class="card">
-                <h2>Empresas Parceiras Cadastradas</h2>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome da Empresa</th>
-                                <th>CNPJ</th>
-                                <th>E-mail / Login</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaEmpresas">
-                            <tr>
-                                <td colspan="5" style="text-align:center;">Carregando empresas...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- MAIN AREA -->
+        <div class="main-area">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <span class="puc-badge" id="badgeTopoEmpresa">🏢 Dados da Minha Empresa</span>
+                    <span style="font-size:0.82rem;color:#64748b;" id="subtituloTopoEmpresa">Gerenciamento Cadastral da Empresa Parceira</span>
                 </div>
-            </section>
-        </div>
-    </main>
+                <div class="topbar-right">
+                    <div id="userStatus" class="user-pill"></div>
+                </div>
+            </header>
 
-    <script src="/js/api.js"></script>
-    <script src="/js/empresas.js"></script>
+            <main class="content-wrapper">
+                <div class="page-header">
+                    <div>
+                        <h1 id="tituloPaginaEmpresa">Dados da Minha Empresa</h1>
+                        <p id="descPaginaEmpresa">Consulte, atualize ou exclua o cadastro da sua empresa parceira.</p>
+                    </div>
+                </div>
+
+                <div id="empresaAlert" class="alert"></div>
+
+                <!-- VISAO 1: EXCLUSIVA DA EMPRESA LOGADA (SO ACESSA O PROPRIO CADASTRO) -->
+                <div id="visaoPropriaEmpresa" class="grid-crud" style="display:none;">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2>🏢 Resumo Corporativo</h2>
+                            <span class="badge-role empresa">Ativa</span>
+                        </div>
+                        <div id="resumoDadosEmpresa" style="font-size:0.88rem;line-height:1.8;color:#334155;"></div>
+
+                        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+                            <div style="font-size:0.8rem;color:#64748b;margin-bottom:0.65rem;">
+                                Deseja encerrar a parceria com o Sistema de Moeda Estudantil? A exclusão exige confirmação e encerrará sua conta.
+                            </div>
+                            <button type="button" class="btn btn-danger" style="width:100%;" id="btnExcluirMinhaContaEmpresa">
+                                🗑️ Excluir Cadastro da Empresa
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="card-header">
+                            <h2>✏️ Atualizar Dados da Empresa</h2>
+                            <span class="badge-role empresa">Edição</span>
+                        </div>
+
+                        <form id="empresaForm">
+                            <input type="hidden" id="empresaId">
+
+                            <div class="section-divider" style="margin-top:0;">1. Dados Corporativos</div>
+                            <div class="form-group">
+                                <label for="nome">Razão Social / Nome Fantasia *</label>
+                                <input type="text" id="nome" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cnpj">CNPJ *</label>
+                                <input type="text" id="cnpj" required maxlength="18">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">E-mail Corporativo (para conferência de resgates) *</label>
+                                <input type="email" id="email" required>
+                            </div>
+
+                            <div class="section-divider">2. Credenciais de Acesso</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="login">Login da Empresa *</label>
+                                    <input type="text" id="login" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="senha">Nova Senha (deixe em branco para manter a atual)</label>
+                                    <input type="password" id="senha" placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+                <!-- VISAO 2: CONSULTA DE EMPRESAS PARCEIRAS PELO PROFESSOR -->
+                <section class="card" id="visaoProfessorEmpresas" style="display:none;">
+                    <div class="card-header">
+                        <h2>📋 Empresas Parceiras Credenciadas</h2>
+                        <span id="contadorEmpresas" class="badge-role empresa">0 parceiros</span>
+                    </div>
+
+                    <div class="table-toolbar">
+                        <input type="text" id="buscaEmpresa" class="search-input" placeholder="🔍 Filtrar por nome, CNPJ ou e-mail...">
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Empresa Parceira</th>
+                                    <th>CNPJ</th>
+                                    <th>E-mail de Conferência & Login</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaEmpresas">
+                                <tr>
+                                    <td colspan="5" style="text-align:center;">Carregando empresas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL DE PREVIEW -->
+    <div id="modalSprint3" class="modal-backdrop" onclick="if(event.target===this) fecharModalPreview()">
+        <div class="modal-card">
+            <h3 id="modalTitulo">Módulo do Sistema</h3>
+            <p id="modalDescricao"></p>
+            <div id="modalPreviewBox" class="preview-box"></div>
+            <div style="display:flex;justify-content:flex-end;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="fecharModalPreview()">Entendi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js?v=3"></script>
+    <script src="/js/empresas.js?v=3"></script>
 </body>
 </html>

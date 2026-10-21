@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Sistema | Moeda Estudantil PUC Minas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="auth-body">
+    <div class="auth-wrapper">
+        <!-- LADO ESQUERDO: BRANDING E FUNCIONAMENTO DO SISTEMA -->
+        <div class="auth-Showcase">
+            <div>
+                <div class="brand-box" style="border:none;padding:0;margin-bottom:2rem;">
+                    <div class="brand-coin" style="width:48px;height:48px;font-size:1.2rem;">M$</div>
+                    <div class="brand-text">
+                        <h2 style="font-size:1.25rem;color:#fff;">Sistema de Moeda Estudantil</h2>
+                        <span style="color:#94a3b8;font-size:0.82rem;">PUC Minas • Engenharia de Software</span>
+                    </div>
+                </div>
+
+                <h1 class="auth-hero-title">Reconhecendo o mérito acadêmico com moedas virtuais.</h1>
+                <p class="auth-hero-desc">
+                    Plataforma universitária onde professores distribuem moedas aos alunos por participação e bom comportamento,
+                    permitindo a troca por descontos e produtos em empresas parceiras.
+                </p>
+
+                <div class="auth-feature-list">
+                    <div class="auth-feature-item">
+                        <span class="auth-feature-icon">👨‍🏫</span>
+                        <div>
+                            <strong>Docentes das Instituições</strong>
+                            <p>Recebem 1.000 moedas acumuláveis por semestre para premiar estudantes.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature-item">
+                        <span class="auth-feature-icon">🎓</span>
+                        <div>
+                            <strong>Estudantes Universitários</strong>
+                            <p>Ingressam no sistema, gerenciam seus dados, acumulam moedas e resgatam vantagens.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature-item">
+                        <span class="auth-feature-icon">🏢</span>
+                        <div>
+                            <strong>Empresas Parceiras</strong>
+                            <p>Credenciam-se para oferecer descontos e produtos em troca de moedas estudantis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-showcase-footer">
+                Profa. Milena Menezes Adão • Grupo: Bernardo Prado, Gabriel Rocha, João Paulo Prado e Rafael Volpini
+            </div>
+        </div>
+
+        <!-- LADO DIREITO: LOGIN OU INGRESSO NO SISTEMA -->
+        <div class="auth-card-container">
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" onclick="trocarAbaAuth('login')" id="tabBtnLogin">
+                    🔐 Entrar no Sistema
+                </button>
+                <button type="button" class="auth-tab" onclick="trocarAbaAuth('aluno')" id="tabBtnAluno">
+                    🎓 Cadastrar Aluno
+                </button>
+                <button type="button" class="auth-tab" onclick="trocarAbaAuth('empresa')" id="tabBtnEmpresa">
+                    🏢 Cadastrar Empresa
+                </button>
+            </div>
+
+            <div id="authAlert" class="alert"></div>
+
+            <!-- ABA 1: LOGIN -->
+            <div id="paneLogin" class="auth-pane active">
+                <div class="auth-pane-header">
+                    <h2>Acesse sua Conta</h2>
+                    <p>Informe seu login e senha cadastrados para entrar no portal exclusivo do seu perfil.</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginInput">Login do Usuário</label>
+                        <input type="text" id="loginInput" required placeholder="Digite seu login">
+                    </div>
+                    <div class="form-group">
+                        <label for="senhaInput">Senha</label>
+                        <input type="password" id="senhaInput" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;padding:0.75rem;margin-top:0.5rem;">
+                        Entrar no Portal →
+                    </button>
+                </form>
+
+                <div class="quick-fill-box" style="margin-top:1.5rem;">
+                    <strong>⚡ Acesso Rápido — Docentes Pré-cadastrados:</strong>
+                    <button type="button" class="quick-chip" onclick="loginRapido('milena.adao', '123456')">
+                        👩‍🏫 Profa. Milena Adão (PUC Minas)
+                    </button>
+                    <button type="button" class="quick-chip" onclick="loginRapido('carlos.silva', '123456')">
+                        👨‍🏫 Prof. Carlos Silva (UFMG)
+                    </button>
+                    <div style="margin-top:0.4rem;color:#64748b;font-size:0.74rem;">
+                        Clique em um professor acima para entrar ou cadastre um novo Aluno/Empresa nas abas superiores.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 2: AUTO-CADASTRO DE ALUNO -->
+            <div id="paneAluno" class="auth-pane">
+                <div class="auth-pane-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+                    <div>
+                        <h2>Cadastro de Aluno</h2>
+                        <p>Preencha seus dados e selecione sua Instituição de Ensino para ingressar.</p>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="preencherNovoAlunoDemo()">
+                        ✨ Exemplo
+                    </button>
+                </div>
+
+                <form id="cadastroAlunoForm">
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" id="alNome" required placeholder="Nome completo">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CPF *</label>
+                            <input type="text" id="alCpf" required placeholder="000.000.000-00" maxlength="14">
+                        </div>
+                        <div class="form-group">
+                            <label>RG *</label>
+                            <input type="text" id="alRg" required placeholder="MG-12.345.678">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>E-mail *</label>
+                            <input type="email" id="alEmail" required placeholder="aluno@sga.pucminas.br">
+                        </div>
+                        <div class="form-group">
+                            <label>Curso *</label>
+                            <input type="text" id="alCurso" required placeholder="Engenharia de Software">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Instituição de Ensino *</label>
+                        <select id="alInstituicaoId" required>
+                            <option value="">Selecione sua instituição...</option>
+                        </select>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>CEP *</label>
+                            <input type="text" id="alCep" required placeholder="30535-901" maxlength="9">
+                        </div>
+                        <div class="form-group">
+                            <label>UF *</label>
+                            <input type="text" id="alUf" required placeholder="MG" maxlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label>Cidade *</label>
+                            <input type="text" id="alCidade" required placeholder="Belo Horizonte">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bairro *</label>
+                            <input type="text" id="alBairro" required placeholder="Coração Eucarístico">
+                        </div>
+                        <div class="form-group">
+                            <label>Complemento</label>
+                            <input type="text" id="alComplemento" placeholder="Opcional">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Logradouro *</label>
+                            <input type="text" id="alLogradouro" required placeholder="Av. Dom José Gaspar">
+                        </div>
+                        <div class="form-group">
+                            <label>Número *</label>
+                            <input type="text" id="alNumero" required placeholder="500">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Login Desejado *</label>
+                            <input type="text" id="alLogin" required placeholder="seu.login">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha *</label>
+                            <input type="password" id="alSenha" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;padding:0.7rem;">
+                        Concluir Cadastro e Entrar →
+                    </button>
+                </form>
+            </div>
+
+            <!-- ABA 3: AUTO-CADASTRO DE EMPRESA PARCEIRA -->
+            <div id="paneEmpresa" class="auth-pane">
+                <div class="auth-pane-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+                    <div>
+                        <h2>Cadastro de Empresa Parceira</h2>
+                        <p>Credencie sua empresa para oferecer vantagens e descontos aos estudantes.</p>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="preencherNovaEmpresaDemo()">
+                        ✨ Exemplo
+                    </button>
+                </div>
+
+                <form id="cadastroEmpresaForm">
+                    <div class="form-group">
+                        <label>Razão Social / Nome Fantasia *</label>
+                        <input type="text" id="empNome" required placeholder="Ex: Livraria Universitária Coreu">
+                    </div>
+                    <div class="form-group">
+                        <label>CNPJ *</label>
+                        <input type="text" id="empCnpj" required placeholder="00.000.000/0001-00" maxlength="18">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail Corporativo *</label>
+                        <input type="email" id="empEmail" required placeholder="contato@empresa.com.br">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Login Desejado *</label>
+                            <input type="text" id="empLogin" required placeholder="login.empresa">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha *</label>
+                            <input type="password" id="empSenha" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;padding:0.7rem;">
+                        Credenciar Empresa e Entrar →
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js?v=3"></script>
+    <script>
+        if (localStorage.getItem('usuarioLogado')) {
+            window.location.replace('/index.html');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            aplicarMascarasInput(['alCpf'], ['empCnpj'], ['alCep']);
+            carregarInstituicoesLogin();
+        });
+
+        function trocarAbaAuth(aba) {
+            document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.auth-pane').forEach(p => p.classList.remove('active'));
+
+            if (aba === 'login') {
+                document.getElementById('tabBtnLogin').classList.add('active');
+                document.getElementById('paneLogin').classList.add('active');
+            } else if (aba === 'aluno') {
+                document.getElementById('tabBtnAluno').classList.add('active');
+                document.getElementById('paneAluno').classList.add('active');
+            } else {
+                document.getElementById('tabBtnEmpresa').classList.add('active');
+                document.getElementById('paneEmpresa').classList.add('active');
+            }
+        }
+
+        function loginRapido(login, senha) {
+            document.getElementById('loginInput').value = login;
+            document.getElementById('senhaInput').value = senha;
+            document.getElementById('loginForm').requestSubmit();
+        }
+
+        function preencherNovoAlunoDemo() {
+            const sufixo = Math.floor(100 + Math.random() * 899);
+            document.getElementById('alNome').value = 'João Paulo Aguiar Prado';
+            document.getElementById('alCpf').value = `123.456.${sufixo}-09`;
+            document.getElementById('alRg').value = `MG-19.${sufixo}.210`;
+            document.getElementById('alEmail').value = `joaopaulo.${sufixo}@sga.pucminas.br`;
+            document.getElementById('alCurso').value = 'Engenharia de Software';
+            const sel = document.getElementById('alInstituicaoId');
+            if (sel.options.length > 1) sel.selectedIndex = 1;
+            document.getElementById('alCep').value = '30535-901';
+            document.getElementById('alUf').value = 'MG';
+            document.getElementById('alCidade').value = 'Belo Horizonte';
+            document.getElementById('alBairro').value = 'Coração Eucarístico';
+            document.getElementById('alComplemento').value = 'Prédio 34';
+            document.getElementById('alLogradouro').value = 'Av. Dom José Gaspar';
+            document.getElementById('alNumero').value = '500';
+            document.getElementById('alLogin').value = `joaopaulo.${sufixo}`;
+            document.getElementById('alSenha').value = '123456';
+        }
+
+        function preencherNovaEmpresaDemo() {
+            const sufixo = Math.floor(100 + Math.random() * 899);
+            document.getElementById('empNome').value = `Livraria & Cafeteria Universitária #${sufixo}`;
+            document.getElementById('empCnpj').value = `18.234.${sufixo}/0001-80`;
+            document.getElementById('empEmail').value = `contato.${sufixo}@livrariacoreu.com.br`;
+            document.getElementById('empLogin').value = `livraria.${sufixo}`;
+            document.getElementById('empSenha').value = '123456';
+        }
+
+        async function carregarInstituicoesLogin() {
+            try {
+                const insts = await apiRequest('/api/instituicoes');
+                const sel = document.getElementById('alInstituicaoId');
+                insts.forEach(i => {
+                    const opt = document.createElement('option');
+                    opt.value = i.id;
+                    opt.textContent = i.nome;
+                    sel.appendChild(opt);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const res = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        login: document.getElementById('loginInput').value.trim(),
+                        senha: document.getElementById('senhaInput').value
+                    })
+                });
+                localStorage.setItem('usuarioLogado', JSON.stringify(res));
+                window.location.replace('/index.html');
+            } catch (err) {
+                mostrarAlerta('authAlert', err.message, 'error');
+            }
+        });
+
+        document.getElementById('cadastroAlunoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const login = document.getElementById('alLogin').value.trim();
+            const senha = document.getElementById('alSenha').value;
+            const payload = {
+                nome: document.getElementById('alNome').value.trim(),
+                cpf: document.getElementById('alCpf').value.trim(),
+                rg: document.getElementById('alRg').value.trim(),
+                email: document.getElementById('alEmail').value.trim(),
+                curso: document.getElementById('alCurso').value.trim(),
+                instituicaoId: Number(document.getElementById('alInstituicaoId').value),
+                cep: document.getElementById('alCep').value.trim(),
+                uf: document.getElementById('alUf').value.trim().toUpperCase(),
+                cidade: document.getElementById('alCidade').value.trim(),
+                bairro: document.getElementById('alBairro').value.trim(),
+                complemento: document.getElementById('alComplemento').value.trim(),
+                logradouro: document.getElementById('alLogradouro').value.trim(),
+                numero: document.getElementById('alNumero').value.trim(),
+                login,
+                senha
+            };
+            try {
+                await apiRequest('/api/alunos', { method: 'POST', body: JSON.stringify(payload) });
+                const auth = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ login, senha })
+                });
+                localStorage.setItem('usuarioLogado', JSON.stringify(auth));
+                window.location.replace('/index.html');
+            } catch (err) {
+                mostrarAlerta('authAlert', err.message, 'error');
+            }
+        });
+
+        document.getElementById('cadastroEmpresaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const login = document.getElementById('empLogin').value.trim();
+            const senha = document.getElementById('empSenha').value;
+            const payload = {
+                nome: document.getElementById('empNome').value.trim(),
+                cnpj: document.getElementById('empCnpj').value.trim(),
+                email: document.getElementById('empEmail').value.trim(),
+                login,
+                senha
+            };
+            try {
+                await apiRequest('/api/empresas', { method: 'POST', body: JSON.stringify(payload) });
+                const auth = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ login, senha })
+                });
+                localStorage.setItem('usuarioLogado', JSON.stringify(auth));
+                window.location.replace('/index.html');
+            } catch (err) {
+                mostrarAlerta('authAlert', err.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

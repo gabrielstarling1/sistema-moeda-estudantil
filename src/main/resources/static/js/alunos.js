@@ -1,16 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
-    carregarInstituicoes();
-    carregarAlunos();
+let listaAlunosCache = [];
 
-    document.getElementById('alunoForm').addEventListener('submit', salvarAluno);
-    document.getElementById('btnCancelar').addEventListener('click', limparFormulario);
+document.addEventListener('DOMContentLoaded', async () => {
+    const user = obterUsuarioLogado();
+    if (!user) return;
+
+    aplicarMascarasInput(['cpf'], [], ['cep']);
+    await carregarInstituicoes();
+
+    if (user.tipoUsuario === 'ALUNO') {
+        // Aluno logado: acessa, edita e exclui APENAS o proprio cadastro
+        document.getElementById('visaoProprioAluno').style.display = 'grid';
+        document.getElementById('visaoProfessorAlunos').style.display = 'none';
+        await carregarMeuCadastroAluno(user.id);
+
+        document.getElementById('alunoForm').addEventListener('submit', salvarMeuCadastroAluno);
+        document.getElementById('btnExcluirMinhaContaAluno').addEventListener('click', () => excluirMinhaContaAluno(user.id));
+    } else if (user.tipoUsuario === 'PROFESSOR') {
+        // Professor logado: visualiza a lista de alunos cadastrados na instituicao
+        document.getElementById('badgeTopoAluno').textContent = '👨‍🏫 Consulta Docente';
+        document.getElementById('tituloPaginaAluno').textContent = 'Alunos Cadastrados no Sistema';
+        document.getElementById('descPaginaAluno').textContent = 'Consulte os estudantes participantes para envio de moedas e acompanhamento acadêmico.';
+        document.getElementById('visaoProprioAluno').style.display = 'none';
+        document.getElementById('visaoProfessorAlunos').style.display = 'block';
+
+        const buscaInput = document.getElementById('buscaAluno');
+        if (buscaInput) {
+            buscaInput.addEventListener('input', (e) => renderizarTabelaAlunos(e.target.value));
+        }
+        await carregarAlunosProfessor();
+    }
 });
 
 async function carregarInstituicoes() {
     try {
         const instituicoes = await apiRequest('/api/instituicoes');
         const select = document.getElementById('instituicaoId');
-        select.innerHTML = '<option value="">Selecione uma instituição...</option>';
+        if (!select) return;
+        select.innerHTML = '<option value="">Selecione a instituição...</option>';
         instituicoes.forEach(inst => {
             const opt = document.createElement('option');
             opt.value = inst.id;
@@ -22,48 +48,46 @@ async function carregarInstituicoes() {
     }
 }
 
-async function carregarAlunos() {
-    const tbody = document.getElementById('tabelaAlunos');
+async function carregarMeuCadastroAluno(id) {
     try {
-        const alunos = await apiRequest('/api/alunos');
-        if (!alunos || alunos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;">Nenhum aluno cadastrado ainda.</td></tr>';
-            return;
+        const a = await apiRequest(`/api/alunos/${id}`);
+        document.getElementById('alunoId').value = a.id;
+        document.getElementById('nome').value = a.nome;
+        document.getElementById('cpf').value = a.cpf;
+        document.getElementById('rg').value = a.rg;
+        document.getElementById('email').value = a.email;
+        document.getElementById('instituicaoId').value = a.instituicaoEnsino ? a.instituicaoEnsino.id : '';
+        document.getElementById('curso').value = a.curso;
+
+        if (a.endereco) {
+            document.getElementById('cep').value = a.endereco.cep || '';
+            document.getElementById('uf').value = a.endereco.uf || '';
+            document.getElementById('cidade').value = a.endereco.cidade || '';
+            document.getElementById('bairro').value = a.endereco.bairro || '';
+            document.getElementById('logradouro').value = a.endereco.logradouro || '';
+            document.getElementById('numero').value = a.endereco.numero || '';
+            document.getElementById('complemento').value = a.endereco.complemento || '';
         }
 
-        tbody.innerHTML = '';
-        alunos.forEach(a => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>#${a.id}</td>
-                <td>
-                    <strong>${a.nome}</strong><br>
-                    <small style="color:#64748b;">@${a.login} | ${a.email}</small>
-                </td>
-                <td>
-                    ${a.cpf}<br>
-                    <small style="color:#64748b;">RG: ${a.rg}</small>
-                </td>
-                <td>
-                    ${a.instituicaoEnsino ? a.instituicaoEnsino.nome : '-'}<br>
-                    <small style="color:#64748b;">${a.curso}</small>
-                </td>
-                <td><span class="badge">${a.saldoMoedas} M$</span></td>
-                <td>
-                    <div style="display:flex;gap:0.4rem;">
-                        <button class="btn btn-secondary btn-sm" onclick="editarAluno(${a.id})">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="excluirAluno(${a.id}, '${a.nome.replace(/'/g, "\\'")}')">Excluir</button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        document.getElementById('login').value = a.login;
+        document.getElementById('senha').value = '';
+
+        document.getElementById('resumoSaldoAluno').textContent = `🪙 ${a.saldoMoedas} M$`;
+        document.getElementById('resumoDadosAluno').innerHTML = `
+            <div><strong>Nome:</strong> ${a.nome}</div>
+            <div><strong>Login:</strong> @${a.login}</div>
+            <div><strong>E-mail:</strong> ${a.email}</div>
+            <div><strong>CPF / RG:</strong> ${a.cpf} • ${a.rg}</div>
+            <div><strong>Instituição:</strong> ${a.instituicaoEnsino ? a.instituicaoEnsino.nome : '-'}</div>
+            <div><strong>Curso:</strong> ${a.curso}</div>
+            <div><strong>Endereço:</strong> ${a.endereco ? `${a.endereco.logradouro}, ${a.endereco.numero} - ${a.endereco.bairro}, ${a.endereco.cidade}/${a.endereco.uf} (${a.endereco.cep})` : '-'}</div>
+        `;
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${err.message}</td></tr>`;
+        mostrarAlerta('alunoAlert', err.message, 'error');
     }
 }
 
-async function salvarAluno(e) {
+async function salvarMeuCadastroAluno(e) {
     e.preventDefault();
     const id = document.getElementById('alunoId').value;
 
@@ -86,83 +110,100 @@ async function salvarAluno(e) {
     };
 
     try {
-        if (id) {
-            await apiRequest(`/api/alunos/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(payload)
-            });
-            mostrarAlerta('alunoAlert', 'Dados do aluno atualizados com sucesso!', 'success');
-        } else {
-            await apiRequest('/api/alunos', {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            mostrarAlerta('alunoAlert', 'Aluno cadastrado com sucesso (saldo inicial: 0 moedas)!', 'success');
+        const atualizado = await apiRequest(`/api/alunos/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+
+        // Atualiza tambem o nome/login na sessao local
+        const user = obterUsuarioLogado();
+        if (user) {
+            user.nome = atualizado.nome;
+            user.login = atualizado.login;
+            localStorage.setItem('usuarioLogado', JSON.stringify(user));
+            atualizarStatusUsuario();
         }
-        limparFormulario();
-        carregarAlunos();
+
+        await carregarMeuCadastroAluno(id);
+        mostrarAlerta('alunoAlert', 'Seus dados cadastrais foram atualizados com sucesso!', 'success');
     } catch (err) {
         mostrarAlerta('alunoAlert', err.message, 'error');
     }
 }
 
-async function editarAluno(id) {
-    try {
-        const a = await apiRequest(`/api/alunos/${id}`);
-        document.getElementById('alunoId').value = a.id;
-        document.getElementById('nome').value = a.nome;
-        document.getElementById('cpf').value = a.cpf;
-        document.getElementById('rg').value = a.rg;
-        document.getElementById('email').value = a.email;
-        document.getElementById('instituicaoId').value = a.instituicaoEnsino ? a.instituicaoEnsino.id : '';
-        document.getElementById('curso').value = a.curso;
-
-        if (a.endereco) {
-            document.getElementById('cep').value = a.endereco.cep || '';
-            document.getElementById('uf').value = a.endereco.uf || '';
-            document.getElementById('cidade').value = a.endereco.cidade || '';
-            document.getElementById('bairro').value = a.endereco.bairro || '';
-            document.getElementById('logradouro').value = a.endereco.logradouro || '';
-            document.getElementById('numero').value = a.endereco.numero || '';
-            document.getElementById('complemento').value = a.endereco.complemento || '';
-        }
-
-        document.getElementById('login').value = a.login;
-        const senhaInput = document.getElementById('senha');
-        senhaInput.value = '';
-        senhaInput.required = false;
-        document.getElementById('senhaLabel').textContent = 'Nova Senha (deixe em branco para manter)';
-
-        document.getElementById('formTitle').textContent = `Editar Aluno #${a.id}`;
-        document.getElementById('btnSalvar').textContent = 'Salvar Alterações';
-        document.getElementById('btnCancelar').style.display = 'inline-flex';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-        mostrarAlerta('alunoAlert', err.message, 'error');
-    }
-}
-
-async function excluirAluno(id, nome) {
-    // US03: A exclusao exige confirmacao
-    if (!confirm(`Tem certeza que deseja excluir o cadastro do aluno "${nome}"? Esta ação não pode ser desfeita.`)) {
+async function excluirMinhaContaAluno(id) {
+    if (!confirm('Tem certeza que deseja excluir permanentemente o seu cadastro de aluno? Você será desconectado imediatamente.')) {
         return;
     }
     try {
         await apiRequest(`/api/alunos/${id}`, { method: 'DELETE' });
-        mostrarAlerta('alunoAlert', `Cadastro do aluno "${nome}" excluído com sucesso.`, 'success');
-        carregarAlunos();
+        alert('Seu cadastro foi excluído com sucesso.');
+        logout();
     } catch (err) {
         mostrarAlerta('alunoAlert', err.message, 'error');
     }
 }
 
-function limparFormulario() {
-    document.getElementById('alunoForm').reset();
-    document.getElementById('alunoId').value = '';
-    const senhaInput = document.getElementById('senha');
-    senhaInput.required = true;
-    document.getElementById('senhaLabel').textContent = 'Senha *';
-    document.getElementById('formTitle').textContent = 'Cadastrar Novo Aluno';
-    document.getElementById('btnSalvar').textContent = 'Cadastrar Aluno';
-    document.getElementById('btnCancelar').style.display = 'none';
+async function carregarAlunosProfessor() {
+    try {
+        listaAlunosCache = await apiRequest('/api/alunos') || [];
+        renderizarTabelaAlunos(document.getElementById('buscaAluno')?.value || '');
+    } catch (err) {
+        document.getElementById('tabelaAlunos').innerHTML =
+            `<tr><td colspan="6" style="color:red;text-align:center;">${err.message}</td></tr>`;
+    }
+}
+
+function renderizarTabelaAlunos(filtro = '') {
+    const tbody = document.getElementById('tabelaAlunos');
+    const contador = document.getElementById('contadorAlunos');
+    const termo = filtro.trim().toLowerCase();
+
+    const filtrados = listaAlunosCache.filter(a => {
+        if (!termo) return true;
+        return (
+            (a.nome && a.nome.toLowerCase().includes(termo)) ||
+            (a.cpf && a.cpf.toLowerCase().includes(termo)) ||
+            (a.curso && a.curso.toLowerCase().includes(termo)) ||
+            (a.login && a.login.toLowerCase().includes(termo)) ||
+            (a.instituicaoEnsino && a.instituicaoEnsino.nome.toLowerCase().includes(termo))
+        );
+    });
+
+    if (contador) {
+        contador.textContent = `${filtrados.length} ${filtrados.length === 1 ? 'aluno' : 'alunos'}`;
+    }
+
+    if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:2rem;">Nenhum aluno cadastrado ainda.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    filtrados.forEach(a => {
+        const end = a.endereco ? `${a.endereco.cidade}/${a.endereco.uf}` : '-';
+        const logradouro = a.endereco ? `${a.endereco.logradouro}, ${a.endereco.numero}` : '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>#${a.id}</strong></td>
+            <td>
+                <div style="font-weight:700;color:#0f172a;">${a.nome}</div>
+                <small style="color:#64748b;">@${a.login} • ${a.email}</small>
+            </td>
+            <td>
+                <div>CPF: ${a.cpf}</div>
+                <small style="color:#64748b;">RG: ${a.rg}</small>
+            </td>
+            <td>
+                <div style="font-weight:600;color:#1e3a8a;">${a.instituicaoEnsino ? a.instituicaoEnsino.nome : '-'}</div>
+                <small style="color:#475569;">${a.curso}</small>
+            </td>
+            <td>
+                <div>${end}</div>
+                <small style="color:#64748b;">${logradouro}</small>
+            </td>
+            <td><span class="badge-coin">🪙 ${a.saldoMoedas} M$</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
