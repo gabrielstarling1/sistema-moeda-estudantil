@@ -6,16 +6,18 @@ public class AuthResponseDTO {
     private String login;
     private String nome;
     private String tipoUsuario;
+    private String token;
     private String mensagem;
 
     public AuthResponseDTO() {
     }
 
-    public AuthResponseDTO(Long id, String login, String nome, String tipoUsuario, String mensagem) {
+    public AuthResponseDTO(Long id, String login, String nome, String tipoUsuario, String token, String mensagem) {
         this.id = id;
         this.login = login;
         this.nome = nome;
         this.tipoUsuario = tipoUsuario;
+        this.token = token;
         this.mensagem = mensagem;
     }
 
@@ -49,6 +51,14 @@ public class AuthResponseDTO {
 
     public void setTipoUsuario(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getMensagem() {

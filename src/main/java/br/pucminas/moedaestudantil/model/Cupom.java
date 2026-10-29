@@ -38,6 +38,13 @@ public class Cupom {
         this.resgateVantagem = resgateVantagem;
     }
 
+    public void utilizar() {
+        if (this.status == StatusCupom.UTILIZADO) {
+            throw new IllegalStateException("Este cupom já foi utilizado.");
+        }
+        this.status = StatusCupom.UTILIZADO;
+    }
+
     public Long getId() {
         return id;
     }

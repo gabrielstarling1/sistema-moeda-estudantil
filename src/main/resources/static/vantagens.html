@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vantagens | Moeda Estudantil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/css/styles.css?v=5">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main">
+            <div class="container">
+                <header class="page-header">
+                    <div>
+                        <p class="eyebrow" id="vantagensEyebrow">Catálogo</p>
+                        <h1 id="vantagensTitulo">Vantagens</h1>
+                        <p class="page-desc" id="vantagensDescricao"></p>
+                    </div>
+                    <div class="page-actions" id="vantagensAcoes"></div>
+                </header>
+
+                <section class="card">
+                    <div class="toolbar">
+                        <div class="input-group" id="buscaVantagemGrupo">
+                            <input type="search" id="buscaVantagem" class="input" placeholder="Buscar por nome, descrição ou empresa" aria-label="Buscar vantagens">
+                        </div>
+                        <div class="page-actions">
+                            <label class="checkbox hidden" id="filtroSaldoRotulo">
+                                <input type="checkbox" id="filtroSaldo"> Somente as que posso resgatar
+                            </label>
+                            <span class="muted" id="contadorVantagens"></span>
+                        </div>
+                    </div>
+
+                    <!-- Catalogo (aluno e professor) -->
+                    <div class="catalog hidden" id="catalogo"></div>
+
+                    <!-- Tabela de gestao (empresa) -->
+                    <div class="table-wrap hidden" id="gestao">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Vantagem</th>
+                                    <th class="right">Custo</th>
+                                    <th class="actions"><span class="hidden">Ações</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaVantagens"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Formulario de vantagem (empresa) -->
+    <div class="modal-backdrop hidden" id="modalVantagem">
+        <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="modalVantagemTitulo">
+            <form id="vantagemForm">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalVantagemTitulo">Nova vantagem</h2>
+                    <button type="button" class="icon-btn" data-fechar aria-label="Fechar" id="btnFecharModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <input type="hidden" id="vantagemId">
+                        <div class="field">
+                            <label for="vantagemNome">Nome</label>
+                            <input type="text" id="vantagemNome" maxlength="150" required placeholder="Ex.: 20% de desconto no almoço">
+                        </div>
+                        <div class="field">
+                            <label for="vantagemDescricao">Descrição</label>
+                            <textarea id="vantagemDescricao" required placeholder="O que o aluno recebe e como utilizar na troca presencial."></textarea>
+                        </div>
+                        <div class="field" style="max-width:220px;">
+                            <label for="vantagemCusto">Custo em moedas</label>
+                            <input type="number" id="vantagemCusto" min="1" step="1" required>
+                        </div>
+                        <div class="field">
+                            <span class="label">Foto do produto</span>
+                            <div class="photo-input">
+                                <div class="photo-preview" id="fotoPreview"></div>
+                                <div class="field" style="flex:1;">
+                                    <input type="file" id="vantagemFoto" accept="image/png,image/jpeg,image/webp,image/gif" aria-label="Foto do produto">
+                                    <span class="hint" id="fotoHint">PNG, JPG, WEBP ou GIF de até 2 MB.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-fechar>Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSalvarVantagem">Publicar vantagem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js?v=5"></script>
+    <script src="/js/layout.js?v=5"></script>
+    <script src="/js/vantagens.js?v=5"></script>
+</body>
+</html>
