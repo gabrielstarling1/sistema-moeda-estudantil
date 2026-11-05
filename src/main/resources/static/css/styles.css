@@ -1435,54 +1435,6 @@ h1 {
     color: var(--text-secondary);
 }
 
-.demo-box {
-    margin-top: 28px;
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-}
-
-.demo-box p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-}
-
-.demo-list {
-    display: grid;
-    gap: 8px;
-}
-
-.demo-user {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface-muted);
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
-}
-
-.demo-user:hover {
-    border-color: var(--brand);
-}
-
-.demo-user strong {
-    display: block;
-    font-weight: 500;
-    font-size: 13px;
-}
-
-.demo-user span {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
 .form-head {
     display: flex;
     justify-content: space-between;

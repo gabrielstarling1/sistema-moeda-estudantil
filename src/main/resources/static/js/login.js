@@ -8,13 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => trocarAba(tab.dataset.aba));
     });
-    document.querySelectorAll('.demo-user').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('loginInput').value = btn.dataset.login;
-            document.getElementById('senhaInput').value = '123456';
-            document.getElementById('loginForm').requestSubmit();
-        });
-    });
     document.getElementById('btnExemploAluno').addEventListener('click', preencherExemploAluno);
     document.getElementById('btnExemploEmpresa').addEventListener('click', preencherExemploEmpresa);
 
