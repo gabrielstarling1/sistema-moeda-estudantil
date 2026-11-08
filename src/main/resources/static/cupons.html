@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conferência de cupons | Moeda Estudantil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/css/styles.css?v=5">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main">
+            <div class="container">
+                <header class="page-header">
+                    <div>
+                        <p class="eyebrow">Empresa parceira</p>
+                        <h1>Conferência de cupons</h1>
+                        <p class="page-desc">Na troca presencial, confirme o código apresentado pelo aluno. É o mesmo código enviado ao e-mail da empresa.</p>
+                    </div>
+                </header>
+
+                <div class="stack">
+                    <div class="grid-aside">
+                        <section class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">Validar código</h2>
+                                    <p class="card-subtitle">Digite o código no formato ME-XXXXXXXX.</p>
+                                </div>
+                            </div>
+                            <form id="validarCupomForm" class="card-body" style="display:flex;gap:8px;flex-wrap:wrap;">
+                                <input type="text" id="codigoCupom" class="input mono" placeholder="ME-XXXXXXXX" required
+                                       style="flex:1;min-width:200px;text-transform:uppercase;" aria-label="Código do cupom">
+                                <button type="submit" class="btn btn-primary">Confirmar utilização</button>
+                            </form>
+                        </section>
+
+                        <div class="grid-2" id="cuponsIndicadores" style="gap:16px;"></div>
+                    </div>
+
+                    <section class="card">
+                        <div class="toolbar">
+                            <h2 class="card-title">Resgates das suas vantagens</h2>
+                            <div class="segmented" id="filtroStatus" role="group" aria-label="Filtrar cupons">
+                                <button type="button" class="active" data-filtro="todos">Todos</button>
+                                <button type="button" data-filtro="EMITIDO">Aguardando</button>
+                                <button type="button" data-filtro="UTILIZADO">Utilizados</button>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Vantagem</th>
+                                        <th>Aluno</th>
+                                        <th>Emitido em</th>
+                                        <th>Situação</th>
+                                        <th class="actions"><span class="hidden">Ações</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaCupons"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js?v=5"></script>
+    <script src="/js/layout.js?v=5"></script>
+    <script src="/js/cupons.js?v=5"></script>
+</body>
+</html>

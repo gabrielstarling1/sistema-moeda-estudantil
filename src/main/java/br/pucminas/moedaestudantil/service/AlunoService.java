@@ -6,6 +6,7 @@ import br.pucminas.moedaestudantil.model.Endereco;
 import br.pucminas.moedaestudantil.model.InstituicaoEnsino;
 import br.pucminas.moedaestudantil.repository.AlunoRepository;
 import br.pucminas.moedaestudantil.repository.InstituicaoRepository;
+import br.pucminas.moedaestudantil.repository.TransacaoRepository;
 import br.pucminas.moedaestudantil.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +19,19 @@ public class AlunoService {
     private final AlunoRepository alunoRepository;
     private final UsuarioRepository usuarioRepository;
     private final InstituicaoRepository instituicaoRepository;
+    private final TransacaoRepository transacaoRepository;
+    private final SessaoService sessaoService;
 
     public AlunoService(AlunoRepository alunoRepository,
                         UsuarioRepository usuarioRepository,
-                        InstituicaoRepository instituicaoRepository) {
+                        InstituicaoRepository instituicaoRepository,
+                        TransacaoRepository transacaoRepository,
+                        SessaoService sessaoService) {
         this.alunoRepository = alunoRepository;
         this.usuarioRepository = usuarioRepository;
         this.instituicaoRepository = instituicaoRepository;
+        this.transacaoRepository = transacaoRepository;
+        this.sessaoService = sessaoService;
     }
 
     public List<Aluno> listarTodos() {
@@ -66,7 +73,7 @@ public class AlunoService {
 
         Aluno aluno = new Aluno();
         aluno.setLogin(dto.getLogin());
-        aluno.setSenhaHash(dto.getSenha());
+        aluno.definirSenha(dto.getSenha());
         aluno.setNome(dto.getNome());
         aluno.setEmail(dto.getEmail());
         aluno.setCpf(dto.getCpf());
@@ -98,7 +105,7 @@ public class AlunoService {
 
         aluno.setLogin(dto.getLogin());
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-            aluno.setSenhaHash(dto.getSenha());
+            aluno.definirSenha(dto.getSenha());
         }
         aluno.setNome(dto.getNome());
         aluno.setEmail(dto.getEmail());
@@ -126,6 +133,10 @@ public class AlunoService {
     @Transactional
     public void excluir(Long id) {
         Aluno aluno = buscarPorId(id);
+        if (transacaoRepository.contarRecebimentosPorAluno(id) > 0 || transacaoRepository.contarResgatesPorAluno(id) > 0) {
+            throw new IllegalStateException("Não é possível excluir: o aluno já possui moedas recebidas ou resgates registrados no extrato.");
+        }
         alunoRepository.delete(aluno);
+        sessaoService.encerrarSessoesDoUsuario(id);
     }
 }

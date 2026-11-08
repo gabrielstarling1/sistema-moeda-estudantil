@@ -1,6 +1,7 @@
 package br.pucminas.moedaestudantil.controller;
 
 import br.pucminas.moedaestudantil.dto.EmpresaRequestDTO;
+import br.pucminas.moedaestudantil.dto.UsuarioSessao;
 import br.pucminas.moedaestudantil.model.EmpresaParceira;
 import br.pucminas.moedaestudantil.service.EmpresaService;
 import jakarta.validation.Valid;
@@ -37,13 +38,17 @@ public class EmpresaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmpresaParceira> atualizar(@PathVariable Long id, @Valid @RequestBody EmpresaRequestDTO dto) {
+    public ResponseEntity<EmpresaParceira> atualizar(@PathVariable Long id, @Valid @RequestBody EmpresaRequestDTO dto,
+                                                     @RequestAttribute(UsuarioSessao.ATRIBUTO) UsuarioSessao sessao) {
+        sessao.exigirProprioCadastro("EMPRESA", id);
         EmpresaParceira atualizada = empresaService.atualizar(id, dto);
         return ResponseEntity.ok(atualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id,
+                                        @RequestAttribute(UsuarioSessao.ATRIBUTO) UsuarioSessao sessao) {
+        sessao.exigirProprioCadastro("EMPRESA", id);
         empresaService.excluir(id);
         return ResponseEntity.noContent().build();
     }

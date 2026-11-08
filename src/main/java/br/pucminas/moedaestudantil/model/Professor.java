@@ -23,6 +23,10 @@ public class Professor extends Usuario {
     @Column(name = "saldo_moedas", nullable = false)
     private int saldoMoedas = 1000;
 
+    // Ultimo semestre (ex.: "2026/2") em que as 1.000 moedas foram creditadas (RN04)
+    @Column(name = "ultimo_semestre_creditado", length = 7)
+    private String ultimoSemestreCreditado;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "instituicao_id", nullable = false)
     private InstituicaoEnsino instituicaoEnsino;
@@ -99,6 +103,14 @@ public class Professor extends Usuario {
 
     public void setInstituicaoEnsino(InstituicaoEnsino instituicaoEnsino) {
         this.instituicaoEnsino = instituicaoEnsino;
+    }
+
+    public String getUltimoSemestreCreditado() {
+        return ultimoSemestreCreditado;
+    }
+
+    public void setUltimoSemestreCreditado(String ultimoSemestreCreditado) {
+        this.ultimoSemestreCreditado = ultimoSemestreCreditado;
     }
 
     public List<TransferenciaMoedas> getEnvios() {
