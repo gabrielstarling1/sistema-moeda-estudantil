@@ -83,7 +83,7 @@ function renderizarCatalogo(lista) {
         }
         return `
             <article class="offer">
-                <img class="offer-media" src="${escapeHtml(v.foto)}" alt="${escapeHtml(v.nome)}" loading="lazy">
+                <img class="offer-media" src="${escapeHtml(urlFoto(v.foto))}" alt="${escapeHtml(v.nome)}" loading="lazy">
                 <div class="offer-body">
                     <span class="offer-partner">${escapeHtml(v.empresaParceira ? v.empresaParceira.nome : '')}</span>
                     <h3 class="offer-title">${escapeHtml(v.nome)}</h3>
@@ -186,7 +186,7 @@ function renderizarGestao(lista) {
         <tr>
             <td>
                 <div class="cell-media">
-                    <img class="thumb" src="${escapeHtml(v.foto)}" alt="">
+                    <img class="thumb" src="${escapeHtml(urlFoto(v.foto))}" alt="">
                     <div>
                         <div class="cell-title">${escapeHtml(v.nome)}</div>
                         <div class="cell-sub" style="max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(v.descricao)}</div>
@@ -223,7 +223,7 @@ function abrirFormulario(id) {
     document.getElementById('fotoHint').textContent = v
         ? 'Envie um arquivo apenas se quiser trocar a foto atual.'
         : 'PNG, JPG, WEBP ou GIF de até 2 MB.';
-    mostrarPreview(v ? v.foto : null);
+    mostrarPreview(v ? urlFoto(v.foto) : null);
     document.getElementById('modalVantagem').classList.remove('hidden');
     document.getElementById('vantagemNome').focus();
 }

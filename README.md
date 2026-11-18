@@ -24,9 +24,25 @@ O sistema foi construído em **Java 21 + Spring Boot 3 + Spring Data JPA (Hibern
 
 ## Documentação por Sprint
 
+### Release 1
 * **[Sprint 1 (`docs/sprint1/`)](docs/sprint1/)**: Regras de Negócio (RN01–RN10), Histórias do Usuário (US01–US16), Diagrama de Casos de Uso, Diagrama de Classes e Diagrama de Componentes.
 * **[Sprint 2 (`docs/sprint2/`)](docs/sprint2/)**: Modelo Entidade-Relacionamento (`ERSprint2.png` e script DDL PostgreSQL `schema.sql`), estratégia de persistência ORM/DAO e CRUDs de Aluno e Empresa Parceira.
 * **[Sprint 3 (`docs/sprint3/`)](docs/sprint3/)**: Versão final dos CRUDs (incluindo as vantagens da empresa parceira), envio de moedas, extrato, resgate com cupom, e-mails, crédito semestral e autenticação da API.
+
+### Release 2
+* **[Sprint 1 — Lab04S01 (`docs/release2/sprint1/`)](docs/release2/sprint1/)**: Diagrama de Visão Geral de Interação e Diagramas de Sequência UML para todos os casos de uso do sistema.
+* **[Sprint 2 — Lab04S02 (`docs/release2/sprint2/`)](docs/release2/sprint2/)**: Diagramas de Implantação UML (Nuvem Vercel + Render, Local PostgreSQL/Docker e Local H2) e preparação completa para deploy na nuvem.
+
+---
+
+## Implantação na Nuvem (Render + Vercel)
+
+O repositório já conta com [`Dockerfile`](Dockerfile), [`render.yaml`](render.yaml) (back-end Java 21 + PostgreSQL gerenciado no Render) e [`vercel.json`](vercel.json) (front-end estático na Vercel com `rewrites` de `/api/**` e `/uploads/**`).
+
+1. **Render (Back-end + PostgreSQL):** crie um **Blueprint** apontando para este repositório; o Render provisionará o banco `moeda-estudantil-db` e o serviço Docker `sistema-moeda-estudantil-api` com leitura automática de `DATABASE_URL` e porta dinâmica `$PORT`.
+2. **Vercel (Front-end):** importe o mesmo repositório na Vercel (se o domínio do Render tiver sufixo próprio, atualize o `destination` em [`vercel.json`](vercel.json)) e publique.
+
+Consulte o guia detalhado em **[`docs/release2/sprint2/README.md`](docs/release2/sprint2/README.md)**.
 
 ---
 

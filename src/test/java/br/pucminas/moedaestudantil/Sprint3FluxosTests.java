@@ -32,6 +32,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
@@ -126,6 +128,43 @@ class Sprint3FluxosTests {
     void deveExigirLoginNaApi() throws Exception {
         mockMvc.perform(get("/api/alunos")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/instituicoes")).andExpect(status().isOk());
+    }
+
+    @Test
+    void devePermitirPreflightCorsParaFrontEndNaVercel() throws Exception {
+        mockMvc.perform(options("/api/instituicoes")
+                        .header("Origin", "https://sistema-moeda-estudantil.vercel.app")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "https://sistema-moeda-estudantil.vercel.app"));
+    }
+
+    @Test
+    void deveServirPaginasEstaticasPrincipais() throws Exception {
+        mockMvc.perform(get("/login.html")).andExpect(status().isOk());
+        mockMvc.perform(get("/index.html")).andExpect(status().isOk());
+    }
+
+    @Test
+    void deveNormalizarUrlsDeBancoDaNuvemParaJdbc() {
+        assertEquals(
+                "jdbc:postgresql://dpg-123.oregon-postgres.render.com:5432/moeda_estudantil",
+                SistemaMoedaEstudantilApplication.normalizarDatabaseUrl(
+                        "postgres://usuario:senha@dpg-123.oregon-postgres.render.com:5432/moeda_estudantil"
+                )
+        );
+        assertEquals(
+                "jdbc:postgresql://db.render.com:5432/moeda?sslmode=require",
+                SistemaMoedaEstudantilApplication.normalizarDatabaseUrl(
+                        "postgresql://user:pass@db.render.com/moeda?sslmode=require"
+                )
+        );
+        assertEquals(
+                "jdbc:postgresql://localhost:5432/moeda_estudantil",
+                SistemaMoedaEstudantilApplication.normalizarDatabaseUrl(
+                        "jdbc:postgresql://localhost:5432/moeda_estudantil"
+                )
+        );
     }
 
     private AlunoRequestDTO novoAluno() {

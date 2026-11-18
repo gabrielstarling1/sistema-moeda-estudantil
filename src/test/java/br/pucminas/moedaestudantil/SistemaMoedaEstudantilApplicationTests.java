@@ -17,7 +17,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.datasource.url=jdbc:h2:mem:crudtest;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH",
+        "app.email.habilitado=false",
+        "app.uploads.dir=target/test-uploads"
+})
 @ActiveProfiles("local")
 class SistemaMoedaEstudantilApplicationTests {
 

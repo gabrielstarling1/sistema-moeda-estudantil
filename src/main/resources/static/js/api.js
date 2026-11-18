@@ -2,6 +2,20 @@
 // Sessao, chamadas a API e utilitarios compartilhados pelas telas
 // =========================================================================
 
+const API_BASE_URL = (window.MOEDA_API_URL || localStorage.getItem('MOEDA_API_URL') || '').replace(/\/+$/, '');
+
+function resolverUrlApi(url) {
+    if (!url || !API_BASE_URL || /^https?:\/\//i.test(url) || url.startsWith('data:')) {
+        return url;
+    }
+    return url.startsWith('/') ? `${API_BASE_URL}${url}` : `${API_BASE_URL}/${url}`;
+}
+
+function urlFoto(foto) {
+    if (!foto) return '';
+    return foto.startsWith('/uploads/') ? resolverUrlApi(foto) : foto;
+}
+
 function obterUsuarioLogado() {
     try {
         return JSON.parse(localStorage.getItem('usuarioLogado'));
@@ -32,7 +46,7 @@ async function apiRequest(url, options = {}) {
         }
     };
 
-    const response = await fetch(url, config);
+    const response = await fetch(resolverUrlApi(url), config);
     if (response.status === 401 && !window.location.pathname.endsWith('/login.html')) {
         // Token expirado ou servidor reiniciado: volta para o login
         localStorage.removeItem('usuarioLogado');
@@ -53,7 +67,7 @@ async function apiRequest(url, options = {}) {
 function logout() {
     const user = obterUsuarioLogado();
     if (user && user.token) {
-        fetch('/api/auth/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${user.token}` } }).catch(() => {});
+        fetch(resolverUrlApi('/api/auth/logout'), { method: 'POST', headers: { 'Authorization': `Bearer ${user.token}` } }).catch(() => {});
     }
     localStorage.removeItem('usuarioLogado');
     window.location.replace('/login.html');

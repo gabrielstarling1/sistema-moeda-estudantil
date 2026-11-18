@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 660" width="1160" height="660" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .node-front { fill: #ffffff; stroke: #333333; stroke-width: 1.5; }
+      .node-side { fill: #ededed; stroke: #333333; stroke-width: 1.5; stroke-linejoin: round; }
+      .env-front { fill: #f9fafb; stroke: #333333; stroke-width: 1.3; }
+      .env-side { fill: #e5e7eb; stroke: #333333; stroke-width: 1.3; stroke-linejoin: round; }
+      .smtp-front { fill: #fdf2f2; stroke: #8b4c4c; stroke-width: 1.5; }
+      .smtp-side { fill: #f5dada; stroke: #8b4c4c; stroke-width: 1.5; stroke-linejoin: round; }
+      .artifact { fill: #f3f4f6; stroke: #555555; stroke-width: 1.1; }
+      .note { fill: #fffde7; stroke: #9e9d6b; stroke-width: 1.2; }
+      .legend { fill: #e5e7eb; stroke: #4b5563; stroke-width: 1.3; }
+      .db-body { fill: #f9fafb; stroke: #333333; stroke-width: 1.4; }
+      .title { font-size: 13px; font-weight: bold; fill: #111827; text-anchor: middle; }
+      .stereo { font-size: 11px; fill: #374151; text-anchor: middle; }
+      .label { font-size: 11.5px; fill: #111827; }
+      .label-bold { font-size: 11.5px; font-weight: bold; fill: #111827; }
+      .label-center { font-size: 11.5px; fill: #111827; text-anchor: middle; }
+      .link-label { font-size: 11px; font-weight: bold; fill: #1f2937; }
+      .note-text { font-size: 10.5px; fill: #262626; }
+      .line-solid { stroke: #333333; stroke-width: 1.4; fill: none; }
+      .line-dashed { stroke: #4b5563; stroke-width: 1.3; stroke-dasharray: 5,4; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1160" height="660"/>
+
+  <!-- NODE 1: Dispositivo do usuario -->
+  <g id="node-usuario">
+    <polygon class="node-side" points="25,45 40,32 340,32 325,45"/>
+    <polygon class="node-side" points="325,45 340,32 340,217 325,230"/>
+    <rect class="node-front" x="25" y="45" width="300" height="185"/>
+    <text class="title" x="175" y="65">Dispositivo do usuário</text>
+    <text class="stereo" x="175" y="80">«device»</text>
+
+    <!-- executionEnvironment: Navegador Web -->
+    <polygon class="env-side" points="42,98 52,90 315,90 305,98"/>
+    <polygon class="env-side" points="305,98 315,90 315,204 305,212"/>
+    <rect class="env-front" x="42" y="98" width="263" height="114"/>
+    <text class="title" x="173" y="116">Navegador Web</text>
+    <text class="stereo" x="173" y="130">«executionEnvironment»</text>
+
+    <!-- Artifact: SPA / Telas HTML/CSS/JS -->
+    <rect class="artifact" x="58" y="140" width="230" height="28" rx="2"/>
+    <text class="label-center" x="166" y="158">SPA Estática (HTML/CSS/JS)</text>
+    <polygon points="274,144 281,144 284,147 284,158 274,158" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+
+    <!-- Artifact: localStorage -->
+    <rect class="artifact" x="58" y="174" width="230" height="28" rx="2"/>
+    <text class="label-center" x="166" y="192">localStorage: usuarioLogado (Bearer)</text>
+    <polygon points="274,178 281,178 284,181 284,192 274,192" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+  </g>
+
+  <!-- NODE 2: Vercel (Front-end + Rewrite Proxy) -->
+  <g id="node-vercel">
+    <polygon class="node-side" points="415,45 430,32 760,32 745,45"/>
+    <polygon class="node-side" points="745,45 760,32 760,217 745,230"/>
+    <rect class="node-front" x="415" y="45" width="330" height="185"/>
+    <text class="title" x="580" y="65">Vercel Edge Network</text>
+    <text class="stereo" x="580" y="80">«executionEnvironment»</text>
+
+    <!-- Artifact: Static Assets -->
+    <rect class="artifact" x="435" y="96" width="290" height="52" rx="2"/>
+    <text class="label-bold" x="572" y="116" text-anchor="middle">src/main/resources/static/</text>
+    <text class="label-center" x="572" y="135">login.html, index.html, vantagens.html, js/, css/</text>
+    <polygon points="711,100 718,100 721,103 721,114 711,114" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+
+    <!-- Artifact: vercel.json -->
+    <rect class="artifact" x="435" y="160" width="290" height="52" rx="2"/>
+    <text class="label-bold" x="572" y="180" text-anchor="middle">vercel.json (Proxy Rewrites)</text>
+    <text class="label-center" x="572" y="199">/api/:path* e /uploads/:path* → Render API</text>
+    <polygon points="711,164 718,164 721,167 721,178 711,178" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+  </g>
+
+  <!-- NODE 3: Render Web Service (Back-end Docker) -->
+  <g id="node-render-app">
+    <polygon class="node-side" points="250,295 265,282 760,282 745,295"/>
+    <polygon class="node-side" points="745,295 760,282 760,555 745,568"/>
+    <rect class="node-front" x="250" y="295" width="495" height="273"/>
+    <text class="title" x="497" y="316">Render Cloud (Web Service)</text>
+    <text class="stereo" x="497" y="331">«device»</text>
+
+    <!-- executionEnvironment: Docker / JVM 21 / Spring Boot -->
+    <polygon class="env-side" points="268,348 278,340 738,340 728,348"/>
+    <polygon class="env-side" points="728,348 738,340 738,542 728,550"/>
+    <rect class="env-front" x="268" y="348" width="460" height="202"/>
+    <text class="title" x="498" y="368">Container Docker (eclipse-temurin:21-jre-alpine)</text>
+    <text class="stereo" x="498" y="383">Spring Boot 3.3.4 / Tomcat :$PORT «executionEnvironment»</text>
+
+    <!-- Artifact: JAR -->
+    <rect class="artifact" x="285" y="396" width="425" height="72" rx="2"/>
+    <text class="label-bold" x="490" y="416" text-anchor="middle">sistema-moeda-estudantil-0.0.1-SNAPSHOT.jar</text>
+    <text class="label-center" x="490" y="435">Controller (AuthInterceptor + CORS) → Service → Repository</text>
+    <text class="label-center" x="490" y="453">JPA / Hibernate → JDBC (normalizarDatabaseUrl)</text>
+    <polygon points="695,400 702,400 705,403 705,414 695,414" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+
+    <!-- Artifact: Uploads -->
+    <rect class="artifact" x="285" y="480" width="425" height="52" rx="2"/>
+    <text class="label-bold" x="490" y="500" text-anchor="middle">Armazenamento Local (/app/uploads/vantagens/)</text>
+    <text class="label-center" x="490" y="519">Imagens das vantagens servidas via ResourceHandler (/uploads/**)</text>
+    <polygon points="695,484 702,484 705,487 705,498 695,498" fill="#ffffff" stroke="#555555" stroke-width="0.9"/>
+  </g>
+
+  <!-- NODE 4: Render PostgreSQL -->
+  <g id="node-render-db">
+    <polygon class="node-side" points="835,45 850,32 1135,32 1120,45"/>
+    <polygon class="node-side" points="1120,45 1135,32 1135,287 1120,300"/>
+    <rect class="node-front" x="835" y="45" width="285" height="255"/>
+    <text class="title" x="977" y="65">Render Managed PostgreSQL</text>
+    <text class="stereo" x="977" y="80">«executionEnvironment»</text>
+
+    <!-- Cylinder DB -->
+    <path class="db-body" d="M 885,125 L 885,205 A 92,16 0 0,0 1069,205 L 1069,125 Z"/>
+    <ellipse class="db-body" cx="977" cy="125" rx="92" ry="16"/>
+    <text class="label-bold" x="977" y="162" text-anchor="middle">PostgreSQL 16</text>
+    <text class="label-center" x="977" y="180">moeda_estudantil</text>
+
+    <!-- Env artifact -->
+    <rect class="artifact" x="855" y="238" width="245" height="44" rx="2"/>
+    <text class="label-bold" x="972" y="256" text-anchor="middle">DATABASE_URL (Internal URL)</text>
+    <text class="label-center" x="972" y="272">ddl-auto=update · Herança JOINED</text>
+  </g>
+
+  <!-- NODE 5: Servidor SMTP externo (opcional/proposto) -->
+  <g id="node-smtp">
+    <polygon class="smtp-side" points="855,360 870,347 1125,347 1110,360"/>
+    <polygon class="smtp-side" points="1110,360 1125,347 1125,442 1110,455"/>
+    <rect class="smtp-front" x="855" y="360" width="255" height="95"/>
+    <text class="title" x="982" y="398">Servidor SMTP externo</text>
+    <text class="stereo" x="982" y="416">«device» (opcional)</text>
+  </g>
+
+  <!-- Note DB Tables -->
+  <g id="note-db">
+    <polygon class="note" points="835,490 1115,490 1130,505 1130,585 835,585"/>
+    <polyline points="1115,490 1115,505 1130,505" fill="none" stroke="#9e9d6b" stroke-width="1.2"/>
+    <text class="note-text" x="845" y="510">Tabelas: usuarios, instituicoes_ensino,</text>
+    <text class="note-text" x="845" y="525">enderecos, alunos, professores,</text>
+    <text class="note-text" x="845" y="540">empresas_parceiras, vantagens,</text>
+    <text class="note-text" x="845" y="555">transacoes, transferencias_moedas,</text>
+    <text class="note-text" x="845" y="570">resgates_vantagem, cupons.</text>
+  </g>
+
+  <!-- Note SMTP -->
+  <g id="note-smtp">
+    <polygon class="note" points="25,370 205,370 220,385 220,475 25,475"/>
+    <polyline points="205,370 205,385 220,385" fill="none" stroke="#9e9d6b" stroke-width="1.2"/>
+    <text class="note-text" x="35" y="392">E-mail (RN06 / RN10):</text>
+    <text class="note-text" x="35" y="408">Quando MAIL_ENABLED=false,</text>
+    <text class="note-text" x="35" y="423">o cupom e a notificação são</text>
+    <text class="note-text" x="35" y="438">registrados no log do Render.</text>
+    <text class="note-text" x="35" y="453">Com SMTP: porta 587/STARTTLS.</text>
+  </g>
+
+  <!-- CONNECTIONS -->
+  <!-- Browser <-> Vercel (HTTPS) -->
+  <line class="line-solid" x1="340" y1="138" x2="415" y2="138"/>
+  <text class="link-label" x="377" y="130" text-anchor="middle">HTTPS</text>
+
+  <!-- Vercel -> Render Web Service (HTTPS Proxy/REST) -->
+  <polyline class="line-solid" points="580,230 580,282"/>
+  <text class="link-label" x="588" y="262">HTTPS / REST JSON</text>
+
+  <!-- Browser -> Render direct CORS (dashed alternative) -->
+  <polyline class="line-dashed" points="175,230 175,335 250,335"/>
+  <text class="link-label" x="180" y="325">HTTPS (CORS opcional)</text>
+
+  <!-- Render App <-> Render PostgreSQL (JDBC) -->
+  <polyline class="line-solid" points="760,390 798,390 798,175 835,175"/>
+  <text class="link-label" x="798" y="285" text-anchor="middle">JDBC</text>
+
+  <!-- Render App -> SMTP (dashed/optional) -->
+  <polyline class="line-dashed" points="760,415 855,415"/>
+  <text class="link-label" x="808" y="407" text-anchor="middle">SMTP</text>
+
+  <!-- Note lines -->
+  <line class="line-dashed" x1="982" y1="300" x2="982" y2="347" opacity="0"/>
+  <polyline class="line-dashed" points="1095,300 1095,330 1142,330 1142,535 1130,535"/>
+  <polyline class="line-dashed" points="220,425 250,425"/>
+
+  <!-- LEGEND -->
+  <rect class="legend" x="370" y="592" width="420" height="46" rx="6"/>
+  <text class="label-bold" x="580" y="611" text-anchor="middle">Contínua = fluxo principal de produção | Tracejada = opcional / alternativo</text>
+  <text class="label-center" x="580" y="628">Vercel (Front-end) · Render Docker (Java 21 / Spring Boot 3.3.4) · Render PostgreSQL 16</text>
+</svg>

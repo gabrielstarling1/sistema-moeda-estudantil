@@ -1,0 +1,44 @@
+@startuml Diagrama_Implantacao_Nuvem_Vercel_Render
+title Diagrama de Implantação — Nuvem (Vercel + Render + PostgreSQL)
+
+skinparam componentStyle uml2
+
+node "Dispositivo do usuário" <<device>> {
+  node "Navegador Web" <<executionEnvironment>> {
+    artifact "SPA Estática (HTML/CSS/JS)"
+    artifact "localStorage: usuarioLogado"
+  }
+}
+
+node "Vercel Edge Network" <<executionEnvironment>> {
+  artifact "src/main/resources/static/" as StaticAssets
+  artifact "vercel.json\n(/api/* e /uploads/* → Render)" as VercelConfig
+}
+
+node "Render Cloud (Web Service)" <<device>> {
+  node "Container Docker\n(eclipse-temurin:21-jre-alpine)\nSpring Boot 3.3.4 / Tomcat :$PORT" <<executionEnvironment>> {
+    artifact "sistema-moeda-estudantil-0.0.1-SNAPSHOT.jar\nController → Service → Repository → JPA/Hibernate → JDBC" as JarApp
+    artifact "/app/uploads/vantagens/\n(Fotos das vantagens)" as UploadsDir
+  }
+}
+
+node "Render Managed PostgreSQL" <<executionEnvironment>> {
+  database "PostgreSQL 16\nmoeda_estudantil" as PostgresCloud
+}
+
+node "Servidor SMTP externo" <<device>> as SmtpCloud
+
+"Navegador Web" -- "Vercel Edge Network" : HTTPS
+"Vercel Edge Network" -- "Container Docker\n(eclipse-temurin:21-jre-alpine)\nSpring Boot 3.3.4 / Tomcat :$PORT" : HTTPS / REST JSON
+"Navegador Web" .. "Container Docker\n(eclipse-temurin:21-jre-alpine)\nSpring Boot 3.3.4 / Tomcat :$PORT" : HTTPS (CORS opcional)
+JarApp -- PostgresCloud : JDBC (DATABASE_URL)
+JarApp .. SmtpCloud : SMTP (587/STARTTLS opcional)
+
+note bottom of PostgresCloud
+  Tabelas: usuarios, instituicoes_ensino, enderecos,
+  alunos, professores, empresas_parceiras, vantagens,
+  transacoes, transferencias_moedas, resgates_vantagem, cupons.
+  Herança JOINED; Hibernate ddl-auto=update.
+end note
+
+@enduml

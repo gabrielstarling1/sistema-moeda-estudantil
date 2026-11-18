@@ -42,7 +42,7 @@ function cardListaHtml({ titulo, subtitulo = '', itensHtml, vazio, link }) {
 function itemVantagemHtml(v) {
     return `
         <li class="list-item">
-            <img class="thumb" src="${escapeHtml(v.foto)}" alt="">
+            <img class="thumb" src="${escapeHtml(urlFoto(v.foto))}" alt="">
             <span class="list-main">
                 <span class="list-title" title="${escapeHtml(v.nome)}">${escapeHtml(v.nome)}</span>
                 <span class="list-meta">${escapeHtml(v.empresaParceira ? v.empresaParceira.nome : '')}</span>

@@ -1,0 +1,24 @@
+databases:
+  - name: moeda-estudantil-db
+    databaseName: moeda_estudantil
+    user: moeda_user
+    plan: free
+
+services:
+  - type: web
+    name: sistema-moeda-estudantil-api
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/instituicoes
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: moeda-estudantil-db
+          property: connectionString
+      - key: MAIL_ENABLED
+        value: "false"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "*"
+      - key: JPA_SHOW_SQL
+        value: "false"
