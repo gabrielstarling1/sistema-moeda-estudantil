@@ -3,6 +3,7 @@ package br.pucminas.moedaestudantil.service;
 import br.pucminas.moedaestudantil.dto.EmpresaRequestDTO;
 import br.pucminas.moedaestudantil.model.EmpresaParceira;
 import br.pucminas.moedaestudantil.repository.EmpresaRepository;
+import br.pucminas.moedaestudantil.repository.TransacaoRepository;
 import br.pucminas.moedaestudantil.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,17 @@ public class EmpresaService {
 
     private final EmpresaRepository empresaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final TransacaoRepository transacaoRepository;
+    private final SessaoService sessaoService;
 
-    public EmpresaService(EmpresaRepository empresaRepository, UsuarioRepository usuarioRepository) {
+    public EmpresaService(EmpresaRepository empresaRepository,
+                          UsuarioRepository usuarioRepository,
+                          TransacaoRepository transacaoRepository,
+                          SessaoService sessaoService) {
         this.empresaRepository = empresaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.transacaoRepository = transacaoRepository;
+        this.sessaoService = sessaoService;
     }
 
     public List<EmpresaParceira> listarTodas() {
@@ -46,7 +54,7 @@ public class EmpresaService {
 
         EmpresaParceira empresa = new EmpresaParceira();
         empresa.setLogin(dto.getLogin());
-        empresa.setSenhaHash(dto.getSenha());
+        empresa.definirSenha(dto.getSenha());
         empresa.setNome(dto.getNome());
         empresa.setCnpj(dto.getCnpj());
         empresa.setEmail(dto.getEmail());
@@ -70,7 +78,7 @@ public class EmpresaService {
 
         empresa.setLogin(dto.getLogin());
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-            empresa.setSenhaHash(dto.getSenha());
+            empresa.definirSenha(dto.getSenha());
         }
         empresa.setNome(dto.getNome());
         empresa.setCnpj(dto.getCnpj());
@@ -82,6 +90,10 @@ public class EmpresaService {
     @Transactional
     public void excluir(Long id) {
         EmpresaParceira empresa = buscarPorId(id);
+        if (transacaoRepository.contarResgatesPorEmpresa(id) > 0) {
+            throw new IllegalStateException("Não é possível excluir: a empresa possui vantagens já resgatadas por alunos.");
+        }
         empresaRepository.delete(empresa);
+        sessaoService.encerrarSessoesDoUsuario(id);
     }
 }

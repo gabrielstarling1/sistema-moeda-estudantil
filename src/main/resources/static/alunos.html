@@ -3,226 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área do Aluno | Sistema de Moeda Estudantil</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Alunos | Moeda Estudantil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/css/styles.css?v=5">
 </head>
 <body>
-    <div class="app-shell">
-        <!-- SIDEBAR DINAMICA -->
-        <aside class="sidebar">
-            <div>
-                <a href="/index.html" class="brand-box">
-                    <div class="brand-coin">M$</div>
-                    <div class="brand-text">
-                        <h2>Moeda Estudantil</h2>
-                        <span>PUC Minas • Engenharia de Software</span>
-                    </div>
-                </a>
+    <div class="app">
+        <aside class="sidebar" id="sidebar"></aside>
 
-                <div class="nav-section-label">Meu Espaço</div>
-                <nav class="sidebar-nav" id="sidebarNavPrincipal"></nav>
+        <main class="main">
+            <div class="container">
 
-                <div class="nav-section-label">Operações de Mérito</div>
-                <nav class="sidebar-nav" id="sidebarNavOperacoes"></nav>
-            </div>
-
-            <div class="sidebar-footer">
-                <strong>Laboratório 3 — Profa. Milena Adão</strong>
-                Arquitetura MVC • JPA/Hibernate • PostgreSQL<br>
-                <span style="font-size:0.7rem;color:#64748b;">Bernardo • Gabriel • João Paulo • Rafael</span>
-            </div>
-        </aside>
-
-        <!-- MAIN AREA -->
-        <div class="main-area">
-            <header class="topbar">
-                <div class="topbar-left">
-                    <span class="puc-badge" id="badgeTopoAluno">🎓 Meu Cadastro</span>
-                    <span style="font-size:0.82rem;color:#64748b;" id="subtituloTopoAluno">Gerenciamento de Dados Cadastrais do Estudante</span>
-                </div>
-                <div class="topbar-right">
-                    <div id="userStatus" class="user-pill"></div>
-                </div>
-            </header>
-
-            <main class="content-wrapper">
-                <div class="page-header">
-                    <div>
-                        <h1 id="tituloPaginaAluno">Meu Cadastro de Aluno</h1>
-                        <p id="descPaginaAluno">Consulte, atualize ou exclua seus dados cadastrais no Sistema de Mérito Estudantil.</p>
-                    </div>
-                </div>
-
-                <div id="alunoAlert" class="alert"></div>
-
-                <!-- VISAO 1: EXCLUSIVA DO ALUNO LOGADO (SO ACESSA O PROPRIO CADASTRO) -->
-                <div id="visaoProprioAluno" class="grid-crud" style="display:none;">
-                    <!-- RESUMO DO PERFIL E CARTEIRA -->
-                    <section class="card">
-                        <div class="card-header">
-                            <h2>🎓 Resumo da Minha Conta</h2>
-                            <span class="badge-coin" id="resumoSaldoAluno">🪙 0 M$</span>
+                <!-- ALUNO: proprio cadastro -->
+                <div id="viewAluno" class="hidden">
+                    <header class="page-header">
+                        <div>
+                            <p class="eyebrow">Conta</p>
+                            <h1>Meu cadastro</h1>
+                            <p class="page-desc">Mantenha seus dados atualizados. O e-mail é usado para avisos de moedas recebidas e para o envio de cupons.</p>
                         </div>
-                        <div id="resumoDadosAluno" style="font-size:0.88rem;line-height:1.75;color:#334155;"></div>
+                    </header>
 
-                        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
-                            <div style="font-size:0.8rem;color:#64748b;margin-bottom:0.65rem;">
-                                Deseja encerrar sua participação no sistema de mérito? A exclusão removerá permanentemente sua conta.
+                    <div class="grid-aside">
+                        <section class="card">
+                            <form id="alunoForm">
+                                <div class="card-body stack">
+                                    <div class="fieldset">
+                                        <h3 class="fieldset-title">Dados pessoais</h3>
+                                        <div class="field">
+                                            <label for="nome">Nome completo</label>
+                                            <input type="text" id="nome" required>
+                                        </div>
+                                        <div class="field">
+                                            <label for="email">E-mail</label>
+                                            <input type="email" id="email" required>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field">
+                                                <label for="cpf">CPF</label>
+                                                <input type="text" id="cpf" inputmode="numeric" maxlength="14" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="rg">RG</label>
+                                                <input type="text" id="rg" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="fieldset">
+                                        <h3 class="fieldset-title">Vínculo acadêmico</h3>
+                                        <div class="field-row">
+                                            <div class="field">
+                                                <label for="instituicaoId">Instituição de ensino</label>
+                                                <select id="instituicaoId" required></select>
+                                            </div>
+                                            <div class="field">
+                                                <label for="curso">Curso</label>
+                                                <input type="text" id="curso" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="fieldset">
+                                        <h3 class="fieldset-title">Endereço</h3>
+                                        <div class="field-row-cep">
+                                            <div class="field">
+                                                <label for="cep">CEP</label>
+                                                <input type="text" id="cep" inputmode="numeric" maxlength="9" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="uf">UF</label>
+                                                <input type="text" id="uf" maxlength="2" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="cidade">Cidade</label>
+                                                <input type="text" id="cidade" required>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="logradouro">Logradouro</label>
+                                            <input type="text" id="logradouro" required>
+                                        </div>
+                                        <div class="field-row-3">
+                                            <div class="field">
+                                                <label for="bairro">Bairro</label>
+                                                <input type="text" id="bairro" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="numero">Número</label>
+                                                <input type="text" id="numero" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="complemento">Complemento <span class="optional">(opcional)</span></label>
+                                                <input type="text" id="complemento">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="fieldset">
+                                        <h3 class="fieldset-title">Acesso</h3>
+                                        <div class="field-row">
+                                            <div class="field">
+                                                <label for="login">Login</label>
+                                                <input type="text" id="login" autocomplete="username" required>
+                                            </div>
+                                            <div class="field">
+                                                <label for="senha">Nova senha <span class="optional">(opcional)</span></label>
+                                                <input type="password" id="senha" autocomplete="new-password" placeholder="Deixe em branco para manter">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer form-actions">
+                                    <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <div class="stack">
+                            <section class="stat stat-primary">
+                                <p class="stat-label">Saldo disponível</p>
+                                <p class="stat-value"><span id="resumoSaldo">0</span><span class="stat-unit">moedas</span></p>
+                                <p class="stat-meta"><a href="/extrato.html" style="color:inherit;text-decoration:underline;">Ver extrato</a></p>
+                            </section>
+
+                            <section class="card">
+                                <div class="card-header"><h2 class="card-title">Resumo</h2></div>
+                                <div class="card-body">
+                                    <dl class="dl" id="resumoAluno"></dl>
+                                </div>
+                            </section>
+
+                            <section class="card danger-zone">
+                                <div class="card-header"><h2 class="card-title">Excluir conta</h2></div>
+                                <div class="card-body stack" style="gap:12px;">
+                                    <p class="muted">Remove o seu cadastro do sistema. Contas com moedas recebidas ou cupons emitidos são mantidas para preservar o histórico.</p>
+                                    <button type="button" class="btn btn-danger-outline" id="btnExcluirConta">Excluir minha conta</button>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFESSOR: consulta de alunos -->
+                <div id="viewProfessor" class="hidden">
+                    <header class="page-header">
+                        <div>
+                            <p class="eyebrow">Consultas</p>
+                            <h1>Alunos</h1>
+                            <p class="page-desc">Estudantes cadastrados no sistema de mérito. Escolha um aluno para enviar moedas.</p>
+                        </div>
+                    </header>
+
+                    <section class="card">
+                        <div class="toolbar">
+                            <div class="input-group" id="buscaAlunoGrupo">
+                                <input type="search" id="buscaAluno" class="input" placeholder="Buscar por nome, curso ou instituição" aria-label="Buscar alunos">
                             </div>
-                            <button type="button" class="btn btn-danger" style="width:100%;" id="btnExcluirMinhaContaAluno">
-                                🗑️ Excluir Meu Cadastro
-                            </button>
+                            <span class="muted" id="contadorAlunos"></span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Aluno</th>
+                                        <th>Curso</th>
+                                        <th>Instituição</th>
+                                        <th class="right">Saldo</th>
+                                        <th class="actions"><span class="hidden">Ações</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaAlunos"></tbody>
+                            </table>
                         </div>
                     </section>
-
-                    <!-- FORMULARIO DE EDICAO DO PROPRIO ALUNO -->
-                    <section class="card">
-                        <div class="card-header">
-                            <h2>✏️ Atualizar Meus Dados Cadastrais</h2>
-                            <span class="badge-role aluno">Edição</span>
-                        </div>
-
-                        <form id="alunoForm">
-                            <input type="hidden" id="alunoId">
-
-                            <div class="section-divider" style="margin-top:0;">1. Identificação do Estudante</div>
-                            <div class="form-group">
-                                <label for="nome">Nome Completo *</label>
-                                <input type="text" id="nome" required>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="cpf">CPF *</label>
-                                    <input type="text" id="cpf" required maxlength="14">
-                                </div>
-                                <div class="form-group">
-                                    <label for="rg">RG *</label>
-                                    <input type="text" id="rg" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="email">E-mail *</label>
-                                    <input type="email" id="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="curso">Curso de Graduação *</label>
-                                    <input type="text" id="curso" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="instituicaoId">Instituição de Ensino Participante *</label>
-                                <select id="instituicaoId" required></select>
-                            </div>
-
-                            <div class="section-divider">2. Endereço Residencial</div>
-                            <div class="form-row-3">
-                                <div class="form-group">
-                                    <label for="cep">CEP *</label>
-                                    <input type="text" id="cep" required maxlength="9">
-                                </div>
-                                <div class="form-group">
-                                    <label for="uf">UF *</label>
-                                    <input type="text" id="uf" maxlength="2" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cidade">Cidade *</label>
-                                    <input type="text" id="cidade" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="bairro">Bairro *</label>
-                                    <input type="text" id="bairro" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="complemento">Complemento</label>
-                                    <input type="text" id="complemento">
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="logradouro">Logradouro *</label>
-                                    <input type="text" id="logradouro" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="numero">Número *</label>
-                                    <input type="text" id="numero" required>
-                                </div>
-                            </div>
-
-                            <div class="section-divider">3. Credenciais de Acesso</div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="login">Login *</label>
-                                    <input type="text" id="login" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="senha">Nova Senha (deixe em branco para manter a atual)</label>
-                                    <input type="password" id="senha" placeholder="••••••••">
-                                </div>
-                            </div>
-
-                            <div class="btn-group">
-                                <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
-                            </div>
-                        </form>
-                    </section>
                 </div>
-
-                <!-- VISAO 2: CONSULTA DE ALUNOS PELO PROFESSOR -->
-                <section class="card" id="visaoProfessorAlunos" style="display:none;">
-                    <div class="card-header">
-                        <h2>📋 Diretório de Alunos Cadastrados</h2>
-                        <span id="contadorAlunos" class="badge-role aluno">0 alunos</span>
-                    </div>
-
-                    <div class="table-toolbar">
-                        <input type="text" id="buscaAluno" class="search-input" placeholder="🔍 Filtrar por nome, CPF, curso ou instituição...">
-                    </div>
-
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Estudante & Contato</th>
-                                    <th>Documentos</th>
-                                    <th>Instituição & Curso</th>
-                                    <th>Localidade</th>
-                                    <th>Saldo de Moedas</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaAlunos">
-                                <tr>
-                                    <td colspan="6" style="text-align:center;">Carregando alunos...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            </main>
-        </div>
-    </div>
-
-    <!-- MODAL DE PREVIEW -->
-    <div id="modalSprint3" class="modal-backdrop" onclick="if(event.target===this) fecharModalPreview()">
-        <div class="modal-card">
-            <h3 id="modalTitulo">Módulo do Sistema</h3>
-            <p id="modalDescricao"></p>
-            <div id="modalPreviewBox" class="preview-box"></div>
-            <div style="display:flex;justify-content:flex-end;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="fecharModalPreview()">Entendi</button>
             </div>
-        </div>
+        </main>
     </div>
 
-    <script src="/js/api.js?v=3"></script>
-    <script src="/js/alunos.js?v=3"></script>
+    <script src="/js/api.js?v=5"></script>
+    <script src="/js/layout.js?v=5"></script>
+    <script src="/js/alunos.js?v=5"></script>
 </body>
 </html>

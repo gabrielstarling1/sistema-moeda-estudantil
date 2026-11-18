@@ -1,60 +1,57 @@
 let listaEmpresasCache = [];
+let vantagensPorEmpresa = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const user = obterUsuarioLogado();
+    const user = iniciarPagina({
+        pagina: u => (u.tipoUsuario === 'EMPRESA' ? 'cadastro' : 'empresas'),
+        perfis: ['EMPRESA', 'PROFESSOR']
+    });
     if (!user) return;
 
-    aplicarMascarasInput([], ['cnpj'], []);
-
     if (user.tipoUsuario === 'EMPRESA') {
-        // Empresa logada: acessa, edita e exclui APENAS o proprio cadastro
-        document.getElementById('visaoPropriaEmpresa').style.display = 'grid';
-        document.getElementById('visaoProfessorEmpresas').style.display = 'none';
-        await carregarMeuCadastroEmpresa(user.id);
-
-        document.getElementById('empresaForm').addEventListener('submit', salvarMeuCadastroEmpresa);
-        document.getElementById('btnExcluirMinhaContaEmpresa').addEventListener('click', () => excluirMinhaContaEmpresa(user.id));
-    } else if (user.tipoUsuario === 'PROFESSOR') {
-        // Professor logado: consulta a rede de empresas parceiras
-        document.getElementById('badgeTopoEmpresa').textContent = '👨‍🏫 Consulta Docente';
-        document.getElementById('tituloPaginaEmpresa').textContent = 'Empresas Parceiras Conveniadas';
-        document.getElementById('descPaginaEmpresa').textContent = 'Consulte as empresas parceiras credenciadas no sistema de mérito estudantil.';
-        document.getElementById('visaoPropriaEmpresa').style.display = 'none';
-        document.getElementById('visaoProfessorEmpresas').style.display = 'block';
-
-        const buscaInput = document.getElementById('buscaEmpresa');
-        if (buscaInput) {
-            buscaInput.addEventListener('input', (e) => renderizarTabelaEmpresas(e.target.value));
-        }
-        await carregarEmpresasProfessor();
+        document.title = 'Dados da empresa | Moeda Estudantil';
+        document.getElementById('viewEmpresa').classList.remove('hidden');
+        aplicarMascarasInput([], ['cnpj'], []);
+        document.getElementById('empresaForm').addEventListener('submit', salvarCadastro);
+        document.getElementById('btnExcluirEmpresa').addEventListener('click', excluirEmpresa);
+        await carregarCadastro(user.id);
+    } else {
+        document.getElementById('viewProfessor').classList.remove('hidden');
+        document.getElementById('buscaEmpresaGrupo').insertAdjacentHTML('afterbegin', icone('buscar'));
+        document.getElementById('buscaEmpresa').addEventListener('input', e => renderizarTabela(e.target.value));
+        await carregarEmpresas();
     }
 });
 
-async function carregarMeuCadastroEmpresa(id) {
+// ---------------------------------------------------------------- Empresa
+
+async function carregarCadastro(id) {
     try {
-        const emp = await apiRequest(`/api/empresas/${id}`);
-        document.getElementById('empresaId').value = emp.id;
+        const [emp, vantagens, cupons] = await Promise.all([
+            apiRequest(`/api/empresas/${id}`),
+            apiRequest(`/api/vantagens?empresaId=${id}`),
+            apiRequest('/api/transacoes/cupons')
+        ]);
         document.getElementById('nome').value = emp.nome;
         document.getElementById('cnpj').value = emp.cnpj;
         document.getElementById('email').value = emp.email;
         document.getElementById('login').value = emp.login;
         document.getElementById('senha').value = '';
 
-        document.getElementById('resumoDadosEmpresa').innerHTML = `
-            <div><strong>Razão Social / Nome:</strong> ${emp.nome}</div>
-            <div><strong>CNPJ:</strong> ${emp.cnpj}</div>
-            <div><strong>E-mail de Conferência:</strong> ${emp.email}</div>
-            <div><strong>Login de Acesso:</strong> @${emp.login}</div>
-        `;
+        document.getElementById('resumoEmpresa').innerHTML = [
+            ['CNPJ', emp.cnpj],
+            ['Vantagens publicadas', formatarNumero(vantagens.length)],
+            ['Cupons emitidos', formatarNumero(cupons.length)],
+            ['Login', emp.login]
+        ].map(([dt, dd]) => `<div class="dl-row"><dt>${dt}</dt><dd>${escapeHtml(dd)}</dd></div>`).join('');
     } catch (err) {
-        mostrarAlerta('empresaAlert', err.message, 'error');
+        mostrarAlerta(null, err.message, 'error');
     }
 }
 
-async function salvarMeuCadastroEmpresa(e) {
+async function salvarCadastro(e) {
     e.preventDefault();
-    const id = document.getElementById('empresaId').value;
-
+    const user = obterUsuarioLogado();
     const payload = {
         nome: document.getElementById('nome').value.trim(),
         cnpj: document.getElementById('cnpj').value.trim(),
@@ -62,91 +59,76 @@ async function salvarMeuCadastroEmpresa(e) {
         login: document.getElementById('login').value.trim(),
         senha: document.getElementById('senha').value
     };
-
+    const botao = e.target.querySelector('button[type="submit"]');
+    definirCarregando(botao, true);
     try {
-        const atualizada = await apiRequest(`/api/empresas/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(payload)
-        });
-
-        const user = obterUsuarioLogado();
-        if (user) {
-            user.nome = atualizada.nome;
-            user.login = atualizada.login;
-            localStorage.setItem('usuarioLogado', JSON.stringify(user));
-            atualizarStatusUsuario();
-        }
-
-        await carregarMeuCadastroEmpresa(id);
-        mostrarAlerta('empresaAlert', 'Os dados da sua empresa foram atualizados com sucesso!', 'success');
+        const atualizada = await apiRequest(`/api/empresas/${user.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+        atualizarSessao({ nome: atualizada.nome, login: atualizada.login });
+        renderizarLayout();
+        await carregarCadastro(user.id);
+        mostrarAlerta(null, 'Dados da empresa atualizados.');
     } catch (err) {
-        mostrarAlerta('empresaAlert', err.message, 'error');
+        mostrarAlerta(null, err.message, 'error');
+    } finally {
+        definirCarregando(botao, false);
     }
 }
 
-async function excluirMinhaContaEmpresa(id) {
-    if (!confirm('Tem certeza que deseja excluir permanentemente o cadastro da sua empresa parceira? Você será desconectado imediatamente.')) {
-        return;
-    }
+async function excluirEmpresa() {
+    const user = obterUsuarioLogado();
+    const confirmado = await abrirDialogo({
+        titulo: 'Excluir o cadastro da empresa?',
+        corpoHtml: '<p>A empresa e as vantagens publicadas serão removidas, e você sairá do sistema. Esta ação não pode ser desfeita.</p>',
+        confirmarTexto: 'Excluir cadastro',
+        perigo: true
+    });
+    if (!confirmado) return;
     try {
-        await apiRequest(`/api/empresas/${id}`, { method: 'DELETE' });
-        alert('O cadastro da sua empresa foi excluído com sucesso.');
+        await apiRequest(`/api/empresas/${user.id}`, { method: 'DELETE' });
         logout();
     } catch (err) {
-        mostrarAlerta('empresaAlert', err.message, 'error');
+        mostrarAlerta(null, err.message, 'error');
     }
 }
 
-async function carregarEmpresasProfessor() {
+// ---------------------------------------------------------------- Professor
+
+async function carregarEmpresas() {
     try {
-        listaEmpresasCache = await apiRequest('/api/empresas') || [];
-        renderizarTabelaEmpresas(document.getElementById('buscaEmpresa')?.value || '');
+        const [empresas, vantagens] = await Promise.all([apiRequest('/api/empresas'), apiRequest('/api/vantagens')]);
+        listaEmpresasCache = (empresas || []).sort((a, b) => a.nome.localeCompare(b.nome));
+        vantagensPorEmpresa = {};
+        (vantagens || []).forEach(v => {
+            const id = v.empresaParceira && v.empresaParceira.id;
+            vantagensPorEmpresa[id] = (vantagensPorEmpresa[id] || 0) + 1;
+        });
+        renderizarTabela('');
     } catch (err) {
         document.getElementById('tabelaEmpresas').innerHTML =
-            `<tr><td colspan="5" style="color:red;text-align:center;">${err.message}</td></tr>`;
+            `<tr><td colspan="4">${estadoVazioHtml('Não foi possível carregar as empresas', err.message)}</td></tr>`;
     }
 }
 
-function renderizarTabelaEmpresas(filtro = '') {
-    const tbody = document.getElementById('tabelaEmpresas');
-    const contador = document.getElementById('contadorEmpresas');
+function renderizarTabela(filtro) {
     const termo = filtro.trim().toLowerCase();
+    const empresas = listaEmpresasCache.filter(e => !termo || [e.nome, e.cnpj, e.email]
+        .some(t => t && t.toLowerCase().includes(termo)));
 
-    const filtradas = listaEmpresasCache.filter(emp => {
-        if (!termo) return true;
-        return (
-            (emp.nome && emp.nome.toLowerCase().includes(termo)) ||
-            (emp.cnpj && emp.cnpj.toLowerCase().includes(termo)) ||
-            (emp.email && emp.email.toLowerCase().includes(termo)) ||
-            (emp.login && emp.login.toLowerCase().includes(termo))
-        );
-    });
+    document.getElementById('contadorEmpresas').textContent =
+        `${empresas.length} ${empresas.length === 1 ? 'empresa' : 'empresas'}`;
 
-    if (contador) {
-        contador.textContent = `${filtradas.length} ${filtradas.length === 1 ? 'parceiro' : 'parceiros'}`;
-    }
-
-    if (filtradas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;padding:2rem;">Nenhuma empresa parceira cadastrada ainda.</td></tr>';
+    const tbody = document.getElementById('tabelaEmpresas');
+    if (empresas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">${termo
+            ? estadoVazioHtml('Nenhuma empresa encontrada', 'Tente outro termo de busca.')
+            : estadoVazioHtml('Nenhuma empresa parceira cadastrada')}</td></tr>`;
         return;
     }
-
-    tbody.innerHTML = '';
-    filtradas.forEach(emp => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>#${emp.id}</strong></td>
-            <td>
-                <div style="font-weight:700;color:#0f172a;">${emp.nome}</div>
-                <small style="color:#64748b;">Parceiro Oficial do Mérito Estudantil</small>
-            </td>
-            <td><code>${emp.cnpj}</code></td>
-            <td>
-                <div>${emp.email}</div>
-                <small style="color:#64748b;">Login: @${emp.login}</small>
-            </td>
-            <td><span class="badge-role empresa">Credenciada</span></td>
-        `;
-        tbody.appendChild(tr);
-    });
+    tbody.innerHTML = empresas.map(e => `
+        <tr>
+            <td class="cell-title">${escapeHtml(e.nome)}</td>
+            <td class="mono">${escapeHtml(e.cnpj)}</td>
+            <td>${escapeHtml(e.email)}</td>
+            <td class="right num">${formatarNumero(vantagensPorEmpresa[e.id] || 0)}</td>
+        </tr>`).join('');
 }

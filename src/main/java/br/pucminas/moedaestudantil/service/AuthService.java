@@ -2,6 +2,7 @@ package br.pucminas.moedaestudantil.service;
 
 import br.pucminas.moedaestudantil.dto.AuthResponseDTO;
 import br.pucminas.moedaestudantil.dto.LoginRequestDTO;
+import br.pucminas.moedaestudantil.dto.UsuarioSessao;
 import br.pucminas.moedaestudantil.model.Aluno;
 import br.pucminas.moedaestudantil.model.EmpresaParceira;
 import br.pucminas.moedaestudantil.model.Professor;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
+    private final SessaoService sessaoService;
 
-    public AuthService(UsuarioRepository usuarioRepository) {
+    public AuthService(UsuarioRepository usuarioRepository, SessaoService sessaoService) {
         this.usuarioRepository = usuarioRepository;
+        this.sessaoService = sessaoService;
     }
 
     public AuthResponseDTO autenticar(LoginRequestDTO dto) {
@@ -40,12 +43,19 @@ public class AuthService {
             tipo = "EMPRESA";
         }
 
+        String token = sessaoService.abrirSessao(new UsuarioSessao(usuario.getId(), usuario.getLogin(), tipo));
+
         return new AuthResponseDTO(
                 usuario.getId(),
                 usuario.getLogin(),
                 nome,
                 tipo,
+                token,
                 "Autenticação realizada com sucesso!"
         );
+    }
+
+    public void encerrarSessao(String token) {
+        sessaoService.encerrar(token);
     }
 }

@@ -47,6 +47,7 @@ bin/
 # BANCO DE DADOS LOCAL & VARIAVEIS DE AMBIENTE
 # =========================================================================
 data/
+uploads/
 *.db
 *.mv.db
 *.trace.db

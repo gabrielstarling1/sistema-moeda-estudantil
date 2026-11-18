@@ -1,12 +1,16 @@
 package br.pucminas.moedaestudantil.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 @Table(name = "usuarios")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_usuario", discriminatorType = DiscriminatorType.STRING)
 public abstract class Usuario {
+
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +19,7 @@ public abstract class Usuario {
     @Column(nullable = false, unique = true, length = 100)
     private String login;
 
+    @JsonIgnore
     @Column(name = "senha_hash", nullable = false)
     private String senhaHash;
 
@@ -28,7 +33,23 @@ public abstract class Usuario {
 
     public boolean autenticar(String login, String senha) {
         return this.login != null && this.login.equals(login)
-                && this.senhaHash != null && this.senhaHash.equals(senha);
+                && this.senhaHash != null && senha != null
+                && ENCODER.matches(senha, this.senhaHash);
+    }
+
+    /**
+     * Armazena apenas o hash BCrypt da senha informada (RN01).
+     */
+    public void definirSenha(String senhaPura) {
+        if (senhaPura == null || senhaPura.isBlank()) {
+            throw new IllegalArgumentException("A senha é obrigatória.");
+        }
+        this.senhaHash = ENCODER.encode(senhaPura);
+    }
+
+    @JsonIgnore
+    public boolean isSenhaComHash() {
+        return this.senhaHash != null && this.senhaHash.startsWith("$2");
     }
 
     public Long getId() {

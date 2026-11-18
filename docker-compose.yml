@@ -14,5 +14,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mailpit:
+    image: axllent/mailpit:v1.20.0
+    container_name: moeda_estudantil_mail
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP usado pela aplicacao
+      - "8025:8025"   # Caixa de entrada: http://localhost:8025
+
 volumes:
   postgres_data:

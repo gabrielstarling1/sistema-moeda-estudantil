@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar moedas | Moeda Estudantil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/css/styles.css?v=5">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main">
+            <div class="container">
+                <header class="page-header">
+                    <div>
+                        <p class="eyebrow">Reconhecimento</p>
+                        <h1>Enviar moedas</h1>
+                        <p class="page-desc">Reconheça bom comportamento, participação em aula e outras conquistas. O aluno é avisado por e-mail.</p>
+                    </div>
+                </header>
+
+                <div class="grid-aside">
+                    <section class="card">
+                        <form id="transferenciaForm">
+                            <div class="card-body form">
+                                <div class="field">
+                                    <label for="alunoId">Aluno</label>
+                                    <select id="alunoId" required>
+                                        <option value="">Carregando alunos...</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label for="valor">Quantidade de moedas</label>
+                                    <input type="number" id="valor" min="1" step="1" required style="max-width:220px;">
+                                    <div class="chips" id="atalhosValor">
+                                        <button type="button" class="chip" data-valor="10">10</button>
+                                        <button type="button" class="chip" data-valor="25">25</button>
+                                        <button type="button" class="chip" data-valor="50">50</button>
+                                        <button type="button" class="chip" data-valor="100">100</button>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="motivo">Motivo do reconhecimento</label>
+                                    <textarea id="motivo" required maxlength="500" placeholder="Ex.: Excelente participação na apresentação do trabalho prático."></textarea>
+                                    <span class="hint">Obrigatório. O texto é enviado ao aluno junto com as moedas.</span>
+                                </div>
+                            </div>
+                            <div class="card-footer form-actions">
+                                <button type="submit" class="btn btn-primary">Enviar moedas</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <div class="stack">
+                        <section class="stat stat-primary">
+                            <p class="stat-label">Saldo disponível</p>
+                            <p class="stat-value"><span id="saldoProfessor">-</span><span class="stat-unit">moedas</span></p>
+                            <p class="stat-meta" id="saldoMeta"></p>
+                        </section>
+
+                        <section class="card">
+                            <div class="card-header"><h2 class="card-title">Últimos envios</h2></div>
+                            <ul class="list" id="ultimosEnvios"></ul>
+                            <div class="card-footer"><a class="card-link" href="/extrato.html">Ver extrato completo</a></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js?v=5"></script>
+    <script src="/js/layout.js?v=5"></script>
+    <script src="/js/transferencia.js?v=5"></script>
+</body>
+</html>
